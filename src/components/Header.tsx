@@ -24,14 +24,14 @@ export default function Header() {
           </span>
           <div className="leading-none">
             <span className="block text-lg font-black text-slate-950">Suivan</span>
-            <span className="block text-xs font-bold text-sky-600">Community Wealth Protocol</span>
+            <span className="protocol-font block text-xs font-bold text-sky-600">Community Wealth Protocol</span>
           </div>
         </Link>
 
         <div className="hidden items-center gap-1 lg:flex">
           {navItems.map((item) => (
             <Link
-              className="rounded-full px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-sky-50 hover:text-sky-700"
+              className="protocol-font rounded-full px-4 py-2 text-sm font-bold text-slate-600 transition hover:bg-sky-50 hover:text-sky-700"
               href={item.href}
               key={item.href}
             >
@@ -44,7 +44,7 @@ export default function Header() {
           <ConnectWallet variant="header" />
           <Link
             href="/pools"
-            className="inline-flex h-11 items-center gap-2 rounded-full bg-slate-950 px-5 text-sm font-black text-white transition hover:bg-sky-600"
+            className="protocol-font inline-flex h-11 items-center gap-2 rounded-full bg-slate-950 px-5 text-sm font-black text-white transition hover:bg-sky-600"
           >
             Explore
             <ArrowUpRight className="size-4" />
@@ -66,7 +66,7 @@ export default function Header() {
           <div className="grid gap-2">
             {navItems.map((item) => (
               <Link
-                className="rounded-lg px-4 py-3 text-sm font-bold text-slate-700 hover:bg-sky-50"
+                className="protocol-font rounded-lg px-4 py-3 text-sm font-bold text-slate-700 hover:bg-sky-50"
                 href={item.href}
                 key={item.href}
                 onClick={() => setMenuOpen(false)}

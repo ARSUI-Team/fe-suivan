@@ -212,7 +212,7 @@ export default function SuivanLanding() {
           <div>
             <p className="suivan-hero-copy mb-5 inline-flex items-center gap-2 rounded-full border border-sky-100 bg-white px-4 py-2 text-sm font-semibold text-sky-700 shadow-sm">
               <Droplets className="size-4" />
-              Community wealth protocol on Sui
+              <span className="protocol-font">{"<sui>"} community wealth protocol {"</sui>"}</span>
             </p>
 
             <h1 className="max-w-3xl text-5xl font-black leading-[1.02] text-slate-950 md:text-7xl">
@@ -253,15 +253,15 @@ export default function SuivanLanding() {
               <div className="bg-slate-950 p-4 text-white">
                 <div className="mb-5 flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-sky-200">Pool object</p>
+                    <p className="protocol-font text-xs uppercase text-sky-200">pool_object::live</p>
                     <p className="font-bold">Sui Creators Collective</p>
                   </div>
-                  <span className="rounded-full bg-sky-400 px-3 py-1 text-xs font-bold text-slate-950">8.1% APY</span>
+                  <span className="protocol-font rounded-full bg-sky-400 px-3 py-1 text-xs font-bold text-slate-950">8.1% APY</span>
                 </div>
 
                 <div className="space-y-3">
                   <div className="bg-white/8 p-3">
-                    <div className="mb-2 flex justify-between text-xs text-slate-300">
+                    <div className="protocol-font mb-2 flex justify-between text-xs text-slate-300">
                       <span>Cycle progress</span>
                       <span>82%</span>
                     </div>
@@ -272,17 +272,17 @@ export default function SuivanLanding() {
 
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-white/8 p-3">
-                      <p className="text-xs text-slate-300">Members</p>
-                      <p className="mt-2 text-xl font-black">9 / 12</p>
+                      <p className="protocol-font text-xs uppercase text-slate-300">members</p>
+                      <p className="protocol-font mt-2 text-xl font-black">9 / 12</p>
                     </div>
                     <div className="bg-white/8 p-3">
-                      <p className="text-xs text-slate-300">Payout</p>
-                      <p className="mt-2 text-xl font-black">30d</p>
+                      <p className="protocol-font text-xs uppercase text-slate-300">payout</p>
+                      <p className="protocol-font mt-2 text-xl font-black">30d</p>
                     </div>
                   </div>
 
                   <div className="bg-[#e8fbff] p-3 text-slate-950">
-                    <p className="text-xs font-bold text-sky-700">Next action</p>
+                    <p className="protocol-font text-xs font-bold uppercase text-sky-700">next_action</p>
                     <p className="mt-1 text-sm font-bold">Final cycle contribution window is live.</p>
                   </div>
                 </div>
@@ -295,7 +295,7 @@ export default function SuivanLanding() {
           {stats.map((stat) => (
             <div className="border-slate-200 p-5 md:border-r last:md:border-r-0" key={stat.label}>
               <p
-                className="text-3xl font-black text-slate-950"
+                className="protocol-font text-3xl font-black text-slate-950"
                 data-counter
                 data-prefix={stat.prefix || ""}
                 data-suffix={stat.suffix || ""}
@@ -303,7 +303,7 @@ export default function SuivanLanding() {
               >
                 0
               </p>
-              <p className="mt-2 text-sm font-semibold text-slate-500">{stat.label}</p>
+              <p className="protocol-font mt-2 text-sm font-semibold text-slate-500">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -312,7 +312,7 @@ export default function SuivanLanding() {
       <section id="rosca" className="px-5 py-24 md:px-10 lg:px-12">
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="suivan-reveal">
-            <p className="mb-4 text-sm font-black uppercase text-sky-600">ROSCA, globally legible</p>
+            <p className="protocol-font mb-4 text-sm font-black uppercase text-sky-600">{"<rosca>"} globally legible {"</rosca>"}</p>
             <h2 className="text-4xl font-black leading-tight text-slate-950 md:text-6xl">
               Arisan energy, protocol clarity.
             </h2>
@@ -335,7 +335,7 @@ export default function SuivanLanding() {
       <section id="cycles" className="bg-slate-950 px-5 py-24 text-white md:px-10 lg:px-12">
         <div className="mx-auto max-w-6xl">
           <div className="suivan-reveal max-w-3xl">
-            <p className="mb-4 text-sm font-black uppercase text-sky-300">Scroll story</p>
+            <p className="protocol-font mb-4 text-sm font-black uppercase text-sky-300">cycle_state_machine</p>
             <h2 className="text-4xl font-black leading-tight md:text-6xl">
               Four states a member should understand instantly.
             </h2>
@@ -349,7 +349,7 @@ export default function SuivanLanding() {
                 <article className="suivan-step border border-white/10 bg-white/[0.04] p-5" key={step.title}>
                   <div className="mb-10 flex items-center justify-between">
                     <Icon className="size-6 text-sky-300" />
-                    <span className="text-sm font-black text-white/40">0{index + 1}</span>
+                    <span className="protocol-font text-sm font-black text-white/40">0{index + 1}</span>
                   </div>
                   <h3 className="text-2xl font-black">{step.title}</h3>
                   <p className="mt-4 text-sm font-medium leading-6 text-slate-300">{step.copy}</p>
@@ -364,7 +364,7 @@ export default function SuivanLanding() {
         <div className="mx-auto max-w-6xl">
           <div className="suivan-reveal flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
-              <p className="mb-4 text-sm font-black uppercase text-sky-600">Explore pools</p>
+              <p className="protocol-font mb-4 text-sm font-black uppercase text-sky-600">pool_objects</p>
               <h2 className="max-w-3xl text-4xl font-black leading-tight text-slate-950 md:text-6xl">
                 Pool cards should feel like live Sui objects.
               </h2>
@@ -383,14 +383,14 @@ export default function SuivanLanding() {
               <article className="suivan-pool-object border border-slate-200 bg-white p-5 shadow-sm" key={pool.name}>
                 <div className="flex items-start justify-between gap-5">
                   <div>
-                    <p className="text-xs font-black uppercase text-slate-400">{pool.region}</p>
+                    <p className="protocol-font text-xs font-black uppercase text-slate-400">{pool.region}</p>
                     <h3 className="mt-3 text-2xl font-black text-slate-950">{pool.name}</h3>
                   </div>
-                  <span className="rounded-full bg-[#e8fbff] px-3 py-1 text-sm font-black text-sky-700">{pool.apy}</span>
+                  <span className="protocol-font rounded-full bg-[#e8fbff] px-3 py-1 text-sm font-black text-sky-700">{pool.apy}</span>
                 </div>
 
                 <div className="mt-8">
-                  <div className="mb-2 flex justify-between text-sm font-bold text-slate-500">
+                  <div className="protocol-font mb-2 flex justify-between text-sm font-bold text-slate-500">
                     <span>Cycle progress</span>
                     <span>{pool.progress}%</span>
                   </div>
@@ -401,12 +401,12 @@ export default function SuivanLanding() {
 
                 <div className="mt-6 grid grid-cols-2 gap-3 text-sm">
                   <div className="border border-slate-100 p-3">
-                    <p className="font-bold text-slate-400">Members</p>
-                    <p className="mt-1 font-black text-slate-950">{pool.members}</p>
+                    <p className="protocol-font font-bold uppercase text-slate-400">members</p>
+                    <p className="protocol-font mt-1 font-black text-slate-950">{pool.members}</p>
                   </div>
                   <div className="border border-slate-100 p-3">
-                    <p className="font-bold text-slate-400">Cadence</p>
-                    <p className="mt-1 font-black text-slate-950">{pool.cadence}</p>
+                    <p className="protocol-font font-bold uppercase text-slate-400">cadence</p>
+                    <p className="protocol-font mt-1 font-black text-slate-950">{pool.cadence}</p>
                   </div>
                 </div>
               </article>
@@ -418,7 +418,7 @@ export default function SuivanLanding() {
       <section className="bg-[#e8fbff] px-5 py-24 md:px-10 lg:px-12">
         <div className="suivan-reveal mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_1fr]">
           <div>
-            <p className="mb-4 text-sm font-black uppercase text-sky-700">Why Sui</p>
+            <p className="protocol-font mb-4 text-sm font-black uppercase text-sky-700">why_sui</p>
             <h2 className="text-4xl font-black leading-tight text-slate-950 md:text-6xl">
               Fast settlement fits rotating savings.
             </h2>

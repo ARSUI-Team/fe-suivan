@@ -82,14 +82,12 @@ export default function LoadingSpinner({
         {/* Progress Percentage */}
         <div className="text-center space-y-2">
           <p 
-            className="text-2xl font-bold bg-gradient-to-r from-sky-500 via-cyan-500 to-emerald-500 bg-clip-text text-transparent"
-            style={{ fontFamily: 'var(--font-space), sans-serif' }}
+            className="protocol-font text-2xl font-bold bg-gradient-to-r from-sky-500 via-cyan-500 to-emerald-500 bg-clip-text text-transparent"
           >
             {Math.round(progress)}%
           </p>
           <p 
-            className="text-gray-500 text-sm font-medium tracking-wide"
-            style={{ fontFamily: 'var(--font-inter), sans-serif' }}
+            className="protocol-font text-sm font-medium uppercase text-gray-500"
           >
             {message}
           </p>

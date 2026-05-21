@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { Web3Provider } from "@/providers/Web3Provider";
 import { ToastProvider } from "@/components/Toast";
@@ -17,6 +17,13 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+});
+
+// Accent font for protocol labels, object IDs, counters, and loading states.
+const jetBrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -52,7 +59,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/archa-hitam.png" />
       </head>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${jetBrainsMono.variable} antialiased`}
       >
         <Web3Provider>
           <LanguageProvider>
