@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowUpRight, Droplets } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import SuivanLogo from "./SuivanLogo";
 
 const links = [
   { label: "ROSCA", href: "/#rosca" },
@@ -8,14 +9,19 @@ const links = [
   { label: "FAQ", href: "/faq" },
 ];
 
+const communityLinks = [
+  { label: "Telegram", href: "https://t.me/suivan" },
+  { label: "Discord", href: "https://discord.gg/suivan" },
+];
+
 export default function Footer() {
   return (
     <footer className="bg-slate-950 px-5 py-14 text-white md:px-10 lg:px-12">
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[1.1fr_0.9fr]">
         <div>
           <div className="mb-5 flex items-center gap-3">
-            <span className="grid size-11 place-items-center rounded-full bg-sky-500">
-              <Droplets className="size-5" />
+            <span className="grid size-11 place-items-center overflow-hidden rounded-full bg-slate-900 ring-1 ring-white/10">
+              <SuivanLogo className="size-11" size={44} />
             </span>
             <div>
               <h3 className="text-2xl font-black">Suivan</h3>
@@ -23,8 +29,8 @@ export default function Footer() {
             </div>
           </div>
           <p className="max-w-xl font-medium leading-7 text-slate-300">
-            A global ROSCA frontend direction built from Archa&apos;s product scope,
-            redesigned for Sui-native cycles, pool state, and community trust.
+            A global ROSCA frontend for Sui-native cycles, pool state, yield
+            signals, and community trust.
           </p>
         </div>
 
@@ -38,6 +44,19 @@ export default function Footer() {
               >
                 {link.label}
               </Link>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {communityLinks.map((link) => (
+              <a
+                className="rounded-full border border-white/10 px-4 py-2 text-sm font-bold text-slate-300 transition hover:border-sky-400 hover:text-white"
+                href={link.href}
+                key={link.href}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                {link.label}
+              </a>
             ))}
           </div>
           <a

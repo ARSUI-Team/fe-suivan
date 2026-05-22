@@ -46,7 +46,7 @@ export default function WinnerModal({ isOpen, onClose }: WinnerModalProps) {
           <div className="relative px-6 pt-8 pb-2 text-center">
             {/* Logo */}
             <div className="inline-flex items-center justify-center w-20 h-20 mb-4 rounded-full bg-white shadow-lg shadow-yellow-500/40 animate-float-gentle">
-              <Image src="/logo Archa.png" alt="Archa" width={64} height={64} className="w-16 h-16 object-contain" />
+              <Image src="/suivan-icon.svg" alt="Suivan" width={64} height={64} className="w-16 h-16 object-contain" />
             </div>
 
             <div className="inline-block px-4 py-1 mb-3 text-[10px] font-bold tracking-widest text-yellow-300 uppercase bg-yellow-500/10 border border-yellow-500/20 rounded-full">

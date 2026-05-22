@@ -24,10 +24,10 @@ const connectors = [
     projectId: projectId || "demo-project-id",
     showQrModal: true,
     metadata: {
-      name: "Archa - Arisan On-Chain",
-      description: "Decentralized Arisan Platform on Mantle Network",
-      url: "https://archa.app",
-      icons: ["https://archa.app/logo.png"],
+      name: "Suivan - Community Wealth Protocol",
+      description: "Sui-native ROSCA frontend for global rotating savings communities",
+      url: "https://suivan.app",
+      icons: ["https://suivan.app/icon.png"],
     },
   }),
 ];

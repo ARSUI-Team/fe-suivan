@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import ConnectWallet from "./ConnectWallet";
+import SuivanLogo from "./SuivanLogo";
 
 const navItems = [
   { label: "ROSCA", href: "/#rosca" },
@@ -19,8 +20,8 @@ export default function Header() {
     <header className="fixed left-0 right-0 top-0 z-[200] px-4 py-4">
       <nav className="mx-auto flex max-w-6xl items-center justify-between rounded-full border border-slate-200 bg-white/90 px-4 py-3 shadow-sm backdrop-blur-xl">
         <Link href="/" className="flex items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-full bg-sky-500 text-base font-black text-white">
-            S
+          <span className="grid size-10 place-items-center overflow-hidden rounded-full bg-slate-950 shadow-sm shadow-sky-500/20">
+            <SuivanLogo className="size-10" priority size={40} />
           </span>
           <div className="leading-none">
             <span className="block text-lg font-black text-slate-950">Suivan</span>

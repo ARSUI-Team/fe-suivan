@@ -50,7 +50,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
 
   return (
     <>
-      {/* Loading Overlay with Archa Logo */}
+      {/* Loading overlay with Suivan logo */}
       {isTransitioning && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/95 backdrop-blur-sm animate-fadeIn">
           <div className="relative w-64 h-64 flex items-center justify-center">
@@ -92,13 +92,13 @@ export default function PageTransition({ children }: PageTransitionProps) {
               </defs>
             </svg>
 
-            {/* Archa Logo in center */}
+            {/* Suivan logo in center */}
             <div className="relative z-10 w-32 h-32 flex items-center justify-center">
               <div className="relative w-28 h-28 rounded-full bg-white shadow-xl flex items-center justify-center p-6 border-2 border-gray-100">
                 <div className="relative w-full h-full">
                   <Image
-                    src="/logo Archa.png"
-                    alt="Archa Logo"
+                    src="/suivan-icon.svg"
+                    alt="Suivan Logo"
                     fill
                     className="object-contain"
                     priority

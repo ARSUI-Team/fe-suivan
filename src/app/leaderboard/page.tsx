@@ -7,16 +7,16 @@ import { useAccount } from "wagmi";
 
 // Simulated leaderboard data - in production this would come from indexer/subgraph
 const MOCK_LEADERBOARD = [
-  { rank: 1, address: "0x1234...5678", totalEarned: 1250.50, poolsJoined: 5, winRate: 80, avatar: "🏆" },
-  { rank: 2, address: "0x2345...6789", totalEarned: 980.25, poolsJoined: 4, winRate: 75, avatar: "🥈" },
-  { rank: 3, address: "0x3456...7890", totalEarned: 750.00, poolsJoined: 3, winRate: 66, avatar: "🥉" },
-  { rank: 4, address: "0x4567...8901", totalEarned: 620.75, poolsJoined: 4, winRate: 50, avatar: "⭐" },
-  { rank: 5, address: "0x5678...9012", totalEarned: 540.30, poolsJoined: 3, winRate: 66, avatar: "⭐" },
-  { rank: 6, address: "0x6789...0123", totalEarned: 480.00, poolsJoined: 2, winRate: 100, avatar: "⭐" },
-  { rank: 7, address: "0x7890...1234", totalEarned: 350.50, poolsJoined: 2, winRate: 50, avatar: "⭐" },
-  { rank: 8, address: "0x8901...2345", totalEarned: 280.25, poolsJoined: 1, winRate: 100, avatar: "⭐" },
-  { rank: 9, address: "0x9012...3456", totalEarned: 220.00, poolsJoined: 2, winRate: 50, avatar: "⭐" },
-  { rank: 10, address: "0x0123...4567", totalEarned: 150.75, poolsJoined: 1, winRate: 100, avatar: "⭐" },
+  { rank: 1, address: "0x1234...5678", totalEarned: 1250.50, poolsJoined: 5, winRate: 80, avatar: "R1" },
+  { rank: 2, address: "0x2345...6789", totalEarned: 980.25, poolsJoined: 4, winRate: 75, avatar: "R2" },
+  { rank: 3, address: "0x3456...7890", totalEarned: 750.00, poolsJoined: 3, winRate: 66, avatar: "R3" },
+  { rank: 4, address: "0x4567...8901", totalEarned: 620.75, poolsJoined: 4, winRate: 50, avatar: "R4" },
+  { rank: 5, address: "0x5678...9012", totalEarned: 540.30, poolsJoined: 3, winRate: 66, avatar: "R5" },
+  { rank: 6, address: "0x6789...0123", totalEarned: 480.00, poolsJoined: 2, winRate: 100, avatar: "R6" },
+  { rank: 7, address: "0x7890...1234", totalEarned: 350.50, poolsJoined: 2, winRate: 50, avatar: "R7" },
+  { rank: 8, address: "0x8901...2345", totalEarned: 280.25, poolsJoined: 1, winRate: 100, avatar: "R8" },
+  { rank: 9, address: "0x9012...3456", totalEarned: 220.00, poolsJoined: 2, winRate: 50, avatar: "R9" },
+  { rank: 10, address: "0x0123...4567", totalEarned: 150.75, poolsJoined: 1, winRate: 100, avatar: "R10" },
 ];
 
 const STATS = {
@@ -43,11 +43,11 @@ export default function LeaderboardPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-gradient-to-br from-yellow-600 via-orange-600 to-red-600">
+      <section className="pt-32 pb-16 bg-gradient-to-br from-slate-950 via-teal-950 to-sky-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full mb-4 sm:mb-6">
-              <span className="text-xl sm:text-2xl">🏆</span>
+              <span className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-cyan-100">Rank</span>
               <span className="text-white text-xs sm:text-sm font-medium">Community Rankings</span>
             </div>
             <h1
@@ -56,8 +56,9 @@ export default function LeaderboardPage() {
             >
               Leaderboard
             </h1>
-            <p className="text-base sm:text-lg text-orange-100 max-w-2xl mx-auto px-4">
-              Top earners in the Archa community. Join pools and climb the ranks!
+            <p className="text-base sm:text-lg text-sky-100 max-w-2xl mx-auto px-4">
+              Top contributors in the Suivan community. Join pools, complete cycles,
+              and build visible protocol reputation.
             </p>
           </div>
 
@@ -126,7 +127,7 @@ export default function LeaderboardPage() {
               <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4">
                 <div className="flex items-center gap-3 sm:gap-4">
                   <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white/20 rounded-full flex items-center justify-center text-xl sm:text-2xl">
-                    🎯
+                    YOU
                   </div>
                   <div>
                     <p className="text-orange-100 text-xs sm:text-sm">Your Rank</p>
@@ -188,7 +189,7 @@ export default function LeaderboardPage() {
                     >
                       <td className="px-3 sm:px-6 py-3 sm:py-4 whitespace-nowrap">
                         <div className="flex items-center gap-1.5 sm:gap-2">
-                          <span className="text-lg sm:text-2xl">{user.avatar}</span>
+                          <span className="protocol-font rounded-full bg-slate-100 px-2 py-1 text-xs font-black text-slate-600">{user.avatar}</span>
                           <span
                             className={`font-bold text-sm sm:text-base ${
                               idx === 0
@@ -239,7 +240,7 @@ export default function LeaderboardPage() {
           <div className="mt-6 sm:mt-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl p-6 sm:p-8 text-white text-center">
             <h3 className="text-xl sm:text-2xl font-bold mb-2">Ready to Climb the Ranks?</h3>
             <p className="text-green-100 mb-4 sm:mb-6 text-sm sm:text-base">
-              Join an arisan pool and start earning yield with AI optimization
+              Join a ROSCA pool and start building transparent cycle progress
             </p>
             <a
               href="/pools"

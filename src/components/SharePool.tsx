@@ -22,10 +22,10 @@ export default function SharePool({
   const [showModal, setShowModal] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://arisanonchain.vercel.app";
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://suivan.app";
   const poolUrl = `${baseUrl}/pools/${poolAddress}`;
 
-  const shareText = `Join my Arisan pool on Archa! ${monthlyDeposit} USDC monthly deposit, ${participants}/${maxParticipants} participants${apy ? `, ${apy.toFixed(1)}% APY` : ""}. Built on Mantle Network with AI-powered yield optimization.`;
+  const shareText = `Join my ROSCA pool on Suivan. ${monthlyDeposit} USDC monthly deposit, ${participants}/${maxParticipants} participants${apy ? `, ${apy.toFixed(1)}% APY` : ""}. Built for Sui-native community savings.`;
 
   const shareLinks = {
     twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(poolUrl)}`,

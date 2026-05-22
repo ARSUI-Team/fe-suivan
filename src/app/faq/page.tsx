@@ -95,7 +95,7 @@ export default function FAQPage() {
             </p>
             <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 px-4">
               <a
-                href="https://t.me/archaonchain"
+                href="https://t.me/suivan"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-green-600 rounded-xl font-semibold hover:bg-green-50 transition-colors min-h-[48px]"
@@ -106,7 +106,7 @@ export default function FAQPage() {
                 Telegram
               </a>
               <a
-                href="https://discord.gg/archa"
+                href="https://discord.gg/suivan"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white/20 text-white rounded-xl font-semibold hover:bg-white/30 transition-colors min-h-[48px]"

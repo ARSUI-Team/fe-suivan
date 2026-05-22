@@ -7,7 +7,7 @@ import { useLanguage } from "@/context/LanguageContext";
 export default function AboutSection() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -28,22 +28,22 @@ export default function AboutSection() {
 
   const problems = [
     {
-      icon: "❌",
+      icon: "Risk",
       title: t("about.problem1.title"),
       description: t("about.problem1.desc"),
     },
     {
-      icon: "❌",
+      icon: "Risk",
       title: t("about.problem2.title"),
       description: t("about.problem2.desc"),
     },
     {
-      icon: "❌",
+      icon: "Risk",
       title: t("about.problem3.title"),
       description: t("about.problem3.desc"),
     },
     {
-      icon: "❌",
+      icon: "Risk",
       title: t("about.problem4.title"),
       description: t("about.problem4.desc"),
     },
@@ -51,22 +51,22 @@ export default function AboutSection() {
 
   const solutions = [
     {
-      icon: "✅",
+      icon: "Fix",
       title: t("about.solution1.title"),
       description: t("about.solution1.desc"),
     },
     {
-      icon: "✅",
+      icon: "Fix",
       title: t("about.solution2.title"),
       description: t("about.solution2.desc"),
     },
     {
-      icon: "✅",
+      icon: "Fix",
       title: t("about.solution3.title"),
       description: t("about.solution3.desc"),
     },
     {
-      icon: "✅",
+      icon: "Fix",
       title: t("about.solution4.title"),
       description: t("about.solution4.desc"),
     },
@@ -74,24 +74,12 @@ export default function AboutSection() {
 
   // Description with HTML formatting
   const getDescription = () => {
-    if (language === "id") {
-      return (
-        <>
-          <strong className="text-gray-900">Archa</strong> adalah protokol arisan terdesentralisasi yang dibangun di atas
-          <strong className="text-blue-600"> Mantle Network</strong>. Setiap peserta menyetorkan <strong className="text-blue-600">USDC</strong> secara berkala,
-          dan giliran penerima ditentukan secara adil melalui smart contract.
-          Yang membuat Archa berbeda: <strong className="text-purple-600">AI Yield Optimizer</strong> secara otomatis memutar dana ke protokol DeFi terbaik untuk menghasilkan yield optimal.
-          Di akhir arisan, <span className="font-semibold text-gray-900">collateral dikembalikan + bonus yield untuk semua peserta</span>!
-        </>
-      );
-    }
     return (
       <>
-        <strong className="text-gray-900">Archa</strong> is a decentralized arisan protocol built on
-        <strong className="text-blue-600"> Mantle Network</strong>. Each participant deposits <strong className="text-blue-600">USDC</strong> periodically,
-        and the recipient&apos;s turn is determined fairly through smart contracts.
-        What makes Archa different: <strong className="text-purple-600">AI Yield Optimizer</strong> automatically invests funds into the best DeFi protocols for optimal yield.
-        At the end of the arisan, <span className="font-semibold text-gray-900">collateral is returned + yield bonus for all participants</span>!
+        <strong className="text-gray-900">Suivan</strong> is a Sui-native ROSCA frontend for rotating savings communities.
+        <strong className="text-blue-600"> Arisan</strong> is treated as a local expression of ROSCA, while the product language stays global.
+        Members join a pool, contribute every cycle, receive payouts by transparent rules, and track collateral,
+        commitment, yield signals, and cycle progress in one place.
       </>
     );
   };

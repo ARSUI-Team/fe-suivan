@@ -62,7 +62,7 @@ export default function CollateralReturnModal({ isOpen, onClose }: CollateralRet
           {/* Header */}
           <div className="relative px-6 pt-8 pb-2 text-center">
             <div className="inline-flex items-center justify-center w-20 h-20 mb-4 rounded-full bg-white shadow-lg shadow-blue-500/30 animate-float-gentle">
-              <Image src="/logo Archa.png" alt="Archa" width={64} height={64} className="w-16 h-16 object-contain" />
+              <Image src="/suivan-icon.svg" alt="Suivan" width={64} height={64} className="w-16 h-16 object-contain" />
             </div>
 
             <div className="inline-block px-4 py-1 mb-3 text-[10px] font-bold tracking-widest text-blue-300 uppercase bg-blue-500/10 border border-blue-500/20 rounded-full">

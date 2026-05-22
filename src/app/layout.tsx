@@ -29,17 +29,15 @@ const jetBrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Suivan - Community Wealth Protocol on Sui",
   description: "A Sui-native frontend for global ROSCA communities, rotating savings cycles, pool state, APY signals, and transparent member progress.",
-  keywords: ["Suivan", "ROSCA", "arisan", "Sui", "community finance", "rotating savings"],
+  keywords: ["Suivan", "ROSCA", "Arisan", "Sui", "community finance", "rotating savings"],
   icons: {
     icon: [
-      { url: "/archa-hitam.png" },
-      { url: "/archa-hitam.png", sizes: "16x16", type: "image/png" },
-      { url: "/archa-hitam.png", sizes: "32x32", type: "image/png" },
+      { url: "/suivan-icon.svg", type: "image/svg+xml" },
     ],
     apple: [
-      { url: "/archa-hitam.png" },
+      { url: "/suivan-icon.svg" },
     ],
-    shortcut: ["/archa-hitam.png"],
+    shortcut: ["/suivan-icon.svg"],
   },
 };
 
@@ -49,14 +47,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id">
+    <html lang="en">
       <head>
-        <link rel="icon" href="/archa-hitam.png" type="image/png" />
-        <link rel="icon" href="/archa-hitam.png" sizes="16x16" type="image/png" />
-        <link rel="icon" href="/archa-hitam.png" sizes="32x32" type="image/png" />
-        <link rel="icon" href="/archa-hitam.png" sizes="48x48" type="image/png" />
-        <link rel="apple-touch-icon" href="/archa-hitam.png" />
-        <link rel="shortcut icon" href="/archa-hitam.png" />
+        <link rel="icon" href="/suivan-icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/suivan-icon.svg" />
+        <link rel="shortcut icon" href="/suivan-icon.svg" />
       </head>
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${jetBrainsMono.variable} antialiased`}

@@ -47,7 +47,7 @@ export default function TestnetInfo() {
           </div>
           <div className="flex-1 min-w-0">
             <h3 className={`font-semibold mb-1 ${hasLowBalance ? "text-orange-900" : "text-gray-900"}`}>
-              {hasLowBalance ? "⚠️ Low MNT Balance!" : "🧪 Testnet Mode Active"}
+              {hasLowBalance ? "Low MNT Balance" : "Testnet Mode Active"}
             </h3>
             <div className="space-y-2">
               {hasLowBalance ? (
@@ -82,7 +82,7 @@ export default function TestnetInfo() {
 
               {!hasLowBalance && (
                 <p className="text-xs text-gray-500">
-                  ℹ️ Once you have MNT, you can claim free USDC below to test pools
+                  Once you have MNT, you can claim free USDC below to test pools.
                 </p>
               )}
             </div>

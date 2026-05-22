@@ -86,7 +86,7 @@ export default function USDCFaucet() {
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-gray-900">Need Test USDC?</h3>
-            <p className="text-sm text-gray-600">Claim {FAUCET_AMOUNT.toLocaleString()} free USDC to test all Archa pools</p>
+            <p className="text-sm text-gray-600">Claim {FAUCET_AMOUNT.toLocaleString()} free USDC to test pool flows</p>
           </div>
         </div>
         <button

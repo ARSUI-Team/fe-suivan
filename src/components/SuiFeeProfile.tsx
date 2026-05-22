@@ -2,38 +2,38 @@
 
 import { useState, useEffect } from "react";
 
-interface MantleGasSavingsProps {
+interface SuiFeeProfileProps {
   transactionType?: "join" | "deposit" | "claim";
   showDetailed?: boolean;
 }
 
-// Gas estimates in gwei
+// Placeholder fee estimates until Suivan's Sui transaction model is finalized.
 const GAS_ESTIMATES = {
   join: {
     gasUsed: 150000,
-    mantleGasPrice: 0.02, // $0.02 per transaction on Mantle
+    suiFeeEstimate: 0.01,
     ethGasPrice: 5.50, // ~$5.50 per transaction on Ethereum mainnet
   },
   deposit: {
     gasUsed: 80000,
-    mantleGasPrice: 0.01,
+    suiFeeEstimate: 0.01,
     ethGasPrice: 3.20,
   },
   claim: {
     gasUsed: 120000,
-    mantleGasPrice: 0.015,
+    suiFeeEstimate: 0.015,
     ethGasPrice: 4.80,
   },
 };
 
-export default function MantleGasSavings({
+export default function SuiFeeProfile({
   transactionType = "join",
   showDetailed = false,
-}: MantleGasSavingsProps) {
+}: SuiFeeProfileProps) {
   const [animatedSavings, setAnimatedSavings] = useState(0);
 
   const estimate = GAS_ESTIMATES[transactionType];
-  const savings = estimate.ethGasPrice - estimate.mantleGasPrice;
+  const savings = estimate.ethGasPrice - estimate.suiFeeEstimate;
   const savingsPercent = ((savings / estimate.ethGasPrice) * 100).toFixed(0);
 
   useEffect(() => {
@@ -66,8 +66,8 @@ export default function MantleGasSavings({
             </svg>
           </div>
           <div>
-            <h4 className="font-semibold text-gray-900">Mantle Gas Savings</h4>
-            <p className="text-xs text-gray-500">Compared to Ethereum Mainnet</p>
+            <h4 className="font-semibold text-gray-900">Sui Fee Profile</h4>
+            <p className="text-xs text-gray-500">Low-fee settlement target for Suivan</p>
           </div>
         </div>
 
@@ -77,8 +77,8 @@ export default function MantleGasSavings({
             <p className="text-lg font-bold text-red-500 line-through">${estimate.ethGasPrice.toFixed(2)}</p>
           </div>
           <div className="bg-white rounded-xl p-3 text-center">
-            <p className="text-xs text-gray-500 mb-1">On Mantle</p>
-            <p className="text-lg font-bold text-green-600">${estimate.mantleGasPrice.toFixed(2)}</p>
+            <p className="text-xs text-gray-500 mb-1">On Sui</p>
+            <p className="text-lg font-bold text-green-600">${estimate.suiFeeEstimate.toFixed(2)}</p>
           </div>
           <div className="bg-green-500 rounded-xl p-3 text-center text-white">
             <p className="text-xs text-green-100 mb-1">You Save</p>
@@ -124,8 +124,8 @@ export function TotalGasSavings() {
           </svg>
         </div>
         <div>
-          <h4 className="font-bold text-lg">Powered by Mantle</h4>
-          <p className="text-green-100 text-sm">Low fees, high performance</p>
+          <h4 className="font-bold text-lg">Built for Sui</h4>
+          <p className="text-green-100 text-sm">Fast settlement, low fees</p>
         </div>
       </div>
 

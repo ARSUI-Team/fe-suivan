@@ -71,13 +71,13 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
           </defs>
         </svg>
 
-        {/* Logo Archa di tengah - rounded circle dengan background putih */}
+        {/* Suivan mark in the center */}
         <div className="relative z-10 w-48 h-48 flex items-center justify-center animate-fadeInScale">
           <div className="relative w-44 h-44 rounded-full bg-white shadow-2xl flex items-center justify-center p-8 border-4 border-gray-100">
             <div className="relative w-full h-full">
               <Image
-                src="/logo Archa.png"
-                alt="Archa Logo"
+                src="/suivan-icon.svg"
+                alt="Suivan Logo"
                 fill
                 className="object-contain"
                 priority

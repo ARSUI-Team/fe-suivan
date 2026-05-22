@@ -219,7 +219,7 @@ export default function PoolAnalyticsChart({
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs sm:text-sm font-medium text-purple-700/80">Trend</p>
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
-                  <span className="text-lg">{isPositive ? "📈" : "📉"}</span>
+                  <span className="protocol-font text-xs font-black">{isPositive ? "UP" : "DN"}</span>
                 </div>
               </div>
               <p className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">

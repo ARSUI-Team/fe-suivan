@@ -433,7 +433,7 @@ export default function SuivanLanding() {
             <div className="flex gap-4 border border-sky-100 bg-white p-5">
               <ShieldCheck className="mt-1 size-6 text-sky-500" />
               <p className="font-semibold leading-7 text-slate-600">
-                Transparent rules can be surfaced cleanly without tying the frontend to old Archa contracts.
+                Transparent rules can be surfaced cleanly without tying the frontend to legacy contracts.
               </p>
             </div>
             <div className="flex gap-4 border border-sky-100 bg-white p-5">

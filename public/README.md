@@ -1,82 +1,15 @@
-# 📁 Public Folder - Logo Upload Instructions
+# Public Assets
 
-## Upload Logo Di Sini
+This folder stores static assets served by the Suivan frontend.
 
-Untuk mengganti icon/favicon website Archa, upload file **archa-hitam.png** ke folder ini.
+## Current Brand Assets
 
-### ✅ Struktur File:
-```
-/public/
-  ├── archa-hitam.png    ← UPLOAD FILE LOGO DI SINI
-  ├── logo Archa.png     (logo existing)
-  ├── file.svg
-  ├── globe.svg
-  ├── next.svg
-  ├── vercel.svg
-  └── window.svg
-```
+- `suivan-icon.svg`: primary favicon and app icon.
+- Existing Archa logo files may remain temporarily as migration references, but new Suivan UI should not depend on them.
 
-### 📋 Spesifikasi Logo:
-- **Nama File**: `archa-hitam.png` (huruf kecil semua)
-- **Format**: PNG dengan transparent background
-- **Ukuran**: 512x512px atau lebih besar
-- **Aspect Ratio**: 1:1 (square/persegi)
+## Asset Rules
 
-### 🚀 Cara Upload:
-
-#### Option 1: Via Finder/File Explorer
-1. Buka folder ini di Finder:
-   ```
-   /Users/macbookpro/Documents/Archa/public/
-   ```
-2. Copy-paste atau drag-drop file `archa-hitam.png` ke sini
-
-#### Option 2: Via Terminal
-```bash
-# Dari folder manapun
-cp /path/to/your/archa-hitam.png /Users/macbookpro/Documents/Archa/public/
-
-# Verify file
-ls -la /Users/macbookpro/Documents/Archa/public/archa-hitam.png
-```
-
-#### Option 3: Via VS Code
-1. Buka VS Code
-2. Klik folder `public` di sidebar
-3. Drag & drop file `archa-hitam.png` ke folder public
-
-### ✨ Setelah Upload:
-
-1. **Restart development server**:
-   ```bash
-   # Tekan Ctrl+C untuk stop server
-   npm run dev  # atau pnpm run dev
-   ```
-
-2. **Refresh browser** (Cmd+R atau Ctrl+R)
-
-3. **Check hasil**:
-   - Tab browser akan menampilkan logo baru
-   - Bookmark akan menggunakan logo baru
-   - Mobile home screen icon akan update
-
-### 🔍 Troubleshooting:
-
-**Logo tidak muncul?**
-- Pastikan nama file **persis**: `archa-hitam.png` (lowercase)
-- Clear browser cache (Cmd+Shift+R atau Ctrl+Shift+R)
-- Cek file ada di path yang benar
-- Restart server development
-
-**Format file salah?**
-- Convert ke PNG jika file format lain
-- Pastikan background transparent (optional tapi recommended)
-
-### 📝 Notes:
-- File logo existing `logo Archa.png` bisa tetap di-keep (tidak perlu dihapus)
-- `archa-hitam.png` akan digunakan sebagai favicon/icon utama
-- File akan otomatis ter-serve di URL: `http://localhost:3000/archa-hitam.png`
-
----
-
-**Ready untuk upload! 🎨**
+- Keep public-facing asset names in English.
+- Avoid emoji in filenames, documentation, and visible UI copy.
+- Prefer SVG for protocol marks and PNG or WebP for raster imagery.
+- Treat any inherited Archa asset as temporary until the Suivan brand system is finalized.

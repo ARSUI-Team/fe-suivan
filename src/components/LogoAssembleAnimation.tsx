@@ -204,7 +204,7 @@ export default function LogoAssembleAnimation({ isVisible }: LogoAssembleAnimati
             }}
           >
             <Image
-              src="/logo Archa.png"
+              src="/suivan-icon.svg"
               alt=""
               width={500}
               height={500}
@@ -221,7 +221,7 @@ export default function LogoAssembleAnimation({ isVisible }: LogoAssembleAnimati
         style={getMainLogoTransform()}
       >
         <Image
-          src="/logo Archa.png"
+          src="/suivan-icon.svg"
           alt=""
           width={800}
           height={800}

@@ -6,13 +6,11 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SharePool from "@/components/SharePool";
-import MantleGasSavings from "@/components/MantleGasSavings";
+import SuiFeeProfile from "@/components/SuiFeeProfile";
 import PoolAnalyticsChart from "@/components/PoolAnalyticsChart";
 import { SuccessCelebration } from "@/components/Confetti";
 import { useAccount } from "wagmi";
 import ConnectWallet from "@/components/ConnectWallet";
-import USDCFaucet from "@/components/USDCFaucet";
-import TestnetInfo from "@/components/TestnetInfo";
 import {
   usePoolInfo,
   useParticipantInfo,
@@ -94,7 +92,7 @@ export default function PoolDetailPage() {
   // Handle join success
   const handleJoinSuccess = () => {
     setShowJoinModal(false);
-    setSuccessMessage({ title: "Successfully Joined!", message: "Welcome to the arisan pool. Your collateral is now earning yield." });
+    setSuccessMessage({ title: "Successfully Joined", message: "Welcome to the ROSCA pool. Your collateral and cycle status are now tracked." });
     setShowSuccessCelebration(true);
     refetchPool();
     refetchParticipant();
@@ -111,7 +109,7 @@ export default function PoolDetailPage() {
   // Handle deposit success
   const handleDepositSuccess = () => {
     setShowDepositModal(false);
-    setSuccessMessage({ title: "Deposit Complete!", message: "Your monthly deposit has been made successfully." });
+    setSuccessMessage({ title: "Deposit Complete", message: "Your cycle contribution has been submitted successfully." });
     setShowSuccessCelebration(true);
     refetchPool();
     refetchParticipant();
@@ -166,7 +164,7 @@ export default function PoolDetailPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="pt-32 pb-8 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <section className="pt-32 pb-8 bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.24),transparent_34%),linear-gradient(135deg,#04111f,#0f2f2c_55%,#07111e)]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <Link href="/pools" className="inline-flex items-center text-gray-400 hover:text-white mb-6 transition-colors">
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -185,17 +183,12 @@ export default function PoolDetailPage() {
                   {status.charAt(0).toUpperCase() + status.slice(1)}
                 </span>
               </div>
-              <a
-                href={`https://sepolia.mantlescan.xyz/address/${poolAddress}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 font-mono text-sm hover:text-blue-400 transition-colors inline-flex items-center gap-1.5"
-              >
+              <div className="text-gray-400 font-mono text-sm inline-flex items-center gap-1.5">
                 {poolAddress}
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-9 4h12M7 8h10" />
                 </svg>
-              </a>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
@@ -216,11 +209,16 @@ export default function PoolDetailPage() {
       {/* Main Content */}
       <section className="py-8">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          {/* Testnet Info Banner */}
-          <TestnetInfo />
-
-          {/* USDC Faucet Banner */}
-          <USDCFaucet />
+          <div className="mb-6 rounded-3xl border border-sky-100 bg-white p-5 shadow-sm">
+            <p className="protocol-font text-xs font-bold uppercase tracking-[0.2em] text-sky-600">
+              Pool detail boundary
+            </p>
+            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-500">
+              Detail data, member state, deposits, yield signals, and settlement status are
+              isolated here so the frontend can connect cleanly to Suivan&apos;s upcoming Sui API
+              and contract modules.
+            </p>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column - Pool Info */}
@@ -267,8 +265,8 @@ export default function PoolDetailPage() {
               {/* Yield Info */}
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-gray-900">AI Yield Optimizer</h2>
-                  <MantleGasSavings transactionType="join" />
+                  <h2 className="text-xl font-bold text-gray-900">Yield and Cycle Signals</h2>
+                  <SuiFeeProfile transactionType="join" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="p-4 bg-purple-50 rounded-xl">
@@ -352,7 +350,7 @@ export default function PoolDetailPage() {
                           </svg>
                           <span className="font-semibold text-green-700">Active Participant</span>
                         </div>
-                        <p className="text-sm text-green-600">You are part of this arisan pool</p>
+                        <p className="text-sm text-green-600">You are part of this ROSCA pool</p>
                       </div>
 
                       <div className="space-y-2">
@@ -465,7 +463,7 @@ export default function PoolDetailPage() {
               <div className="p-4 bg-blue-50 rounded-xl">
                 <p className="text-sm text-blue-600 mb-1">Required Collateral (125%)</p>
                 <p className="text-2xl font-bold text-blue-700">{requiredCollateral?.toFixed(0) || 0} USDC</p>
-                <p className="text-xs text-blue-500 mt-1">Returned at end of arisan + yield bonus</p>
+                <p className="text-xs text-blue-500 mt-1">Returned at the end of the cycle with yield bonus when available</p>
               </div>
 
               {!hasEnoughBalance && (
