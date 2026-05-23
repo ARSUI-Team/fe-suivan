@@ -158,26 +158,20 @@ export default function PoolsPage() {
   const hasEnoughBalance = requiredCollateral ? usdcBalance >= requiredCollateral : false;
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-[#fbf7ed] text-slate-950">
       <Header />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-16 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.28),transparent_42%),linear-gradient(135deg,#04111f,#0f2f2c_55%,#07111e)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="protocol-font mb-5 inline-flex rounded-full border border-sky-300/30 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-[0.22em] text-sky-100">
-              Sui-native pool explorer
+      <section className="relative isolate overflow-hidden px-5 pb-14 pt-32 md:px-10 lg:px-12">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_22%_18%,rgba(94,200,255,0.32),transparent_30%),linear-gradient(180deg,#fbf7ed,#f8fbff)]" />
+        <div className="mx-auto max-w-6xl">
+          <div className="max-w-4xl">
+            <div className="protocol-font mb-5 inline-flex rounded-full border-2 border-slate-950 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.22em] shadow-[4px_4px_0_#06111f]">
+              pool_explorer
             </div>
-            <h1
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4"
-              style={{ fontFamily: "var(--font-space), sans-serif" }}
-            >
-              Explore{" "}
-              <span className="bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-200 bg-clip-text text-transparent">
-                ROSCA Pools
-              </span>
+            <h1 className="text-5xl font-black leading-[0.95] tracking-[-0.06em] text-slate-950 md:text-7xl">
+              Explore ROSCA Pools
             </h1>
-            <p className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto px-4">
+            <p className="mt-6 max-w-2xl text-lg font-semibold leading-8 text-slate-600">
               Discover rotating savings pools with visible cycle state, participant progress,
               and APY signals prepared for the next Suivan protocol integration.
             </p>
@@ -185,22 +179,21 @@ export default function PoolsPage() {
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="py-8 sm:py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-6 rounded-3xl border border-sky-100 bg-white p-5 shadow-sm">
+      <section className="px-5 py-8 md:px-10 lg:px-12">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-6 rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[5px_5px_0_#06111f]">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="protocol-font text-xs font-bold uppercase tracking-[0.2em] text-sky-600">
+                <p className="protocol-font text-xs font-black uppercase tracking-[0.2em] text-sky-700">
                   Integration boundary
                 </p>
                 <h2 className="mt-1 text-lg font-black text-slate-950">Pool data is modular by design.</h2>
-                <p className="mt-1 max-w-3xl text-sm leading-6 text-slate-500">
+                <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
                   This page keeps the inherited pool flow as a frontend baseline while Suivan&apos;s
                   Sui contracts and backend API are being finalized.
                 </p>
               </div>
-              <span className="protocol-font rounded-full bg-slate-950 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
+              <span className="protocol-font rounded-full border-2 border-slate-950 bg-[#dff8ff] px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-slate-950">
                 API-ready
               </span>
             </div>
@@ -208,26 +201,26 @@ export default function PoolsPage() {
 
           {/* Stats Bar */}
           {pools && pools.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-              <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100">
-                <p className="text-xs sm:text-sm text-gray-500">Total Pools</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900">{pools.length}</p>
+            <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+              <div className="rounded-2xl border-2 border-slate-950 bg-white p-4 shadow-[4px_4px_0_#06111f]">
+                <p className="protocol-font text-xs font-black text-slate-400">TOTAL POOLS</p>
+                <p className="protocol-font mt-2 text-3xl font-black text-slate-950">{pools.length}</p>
               </div>
-              <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100">
-                <p className="text-xs sm:text-sm text-gray-500">Open Pools</p>
-                <p className="text-xl sm:text-2xl font-bold text-green-600">
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-4 shadow-[4px_4px_0_#06111f]">
+                <p className="protocol-font text-xs font-black text-slate-500">OPEN</p>
+                <p className="protocol-font mt-2 text-3xl font-black text-slate-950">
                   {pools.filter((p) => p.status === "open").length}
                 </p>
               </div>
-              <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100">
-                <p className="text-xs sm:text-sm text-gray-500">Active Pools</p>
-                <p className="text-xl sm:text-2xl font-bold text-blue-600">
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4 shadow-[4px_4px_0_#06111f]">
+                <p className="protocol-font text-xs font-black text-slate-500">ACTIVE</p>
+                <p className="protocol-font mt-2 text-3xl font-black text-slate-950">
                   {pools.filter((p) => p.status === "active").length}
                 </p>
               </div>
-              <div className="bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-gray-100">
-                <p className="text-xs sm:text-sm text-gray-500">Your USDC Balance</p>
-                <p className="text-xl sm:text-2xl font-bold text-sky-600">
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#fff1c7] p-4 shadow-[4px_4px_0_#06111f]">
+                <p className="protocol-font text-xs font-black text-slate-500">USDC</p>
+                <p className="protocol-font mt-2 text-3xl font-black text-slate-950">
                   {isConnected ? `${usdcBalance.toFixed(2)}` : "---"}
                 </p>
               </div>
@@ -238,15 +231,15 @@ export default function PoolsPage() {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
             {/* Filter Tabs */}
             <div className="w-full md:w-auto overflow-x-auto scrollbar-hide">
-              <div className="flex items-center gap-2 bg-white rounded-full p-1 shadow-sm min-w-max">
+              <div className="flex min-w-max items-center gap-2 rounded-full border-2 border-slate-950 bg-white p-1 shadow-[4px_4px_0_#06111f]">
                 {(["all", "open", "active", "completed"] as PoolStatus[]).map((status) => (
                   <button
                     key={status}
                     onClick={() => setFilter(status)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap min-h-[44px] ${
+                    className={`protocol-font min-h-[44px] whitespace-nowrap rounded-full px-4 py-2 text-sm font-black transition-all duration-200 ${
                       filter === status
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-600 hover:text-gray-900"
+                        ? "bg-slate-950 text-white"
+                        : "text-slate-600 hover:bg-[#dff8ff] hover:text-slate-950"
                     }`}
                   >
                     {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -259,7 +252,7 @@ export default function PoolsPage() {
             {isConnected ? (
               <button
                 onClick={() => setShowCreateModal(true)}
-              className="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-teal-500 to-sky-500 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-teal-500/25 transition-all duration-300 min-h-[44px] whitespace-nowrap"
+              className="protocol-font min-h-[44px] w-full whitespace-nowrap rounded-full border-2 border-slate-950 bg-sky-400 px-6 py-3 text-sm font-black text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5 md:w-auto"
               >
                 + Create Custom Pool
               </button>
@@ -274,30 +267,39 @@ export default function PoolsPage() {
           {/* Loading State */}
           {poolsLoading && (
             <div className="flex items-center justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
-              <span className="ml-4 text-gray-600">Loading pools from blockchain...</span>
+              <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white px-6 py-5 shadow-[5px_5px_0_#06111f]">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 animate-spin rounded-full border-4 border-slate-950 border-b-sky-400" />
+                  <div>
+                    <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-sky-700">
+                      syncing
+                    </p>
+                    <p className="mt-1 font-bold text-slate-600">Loading pool state...</p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
           {/* Pool Grid */}
           {!poolsLoading && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
               {filteredPools.map((pool) => (
                 <div
                   key={pool.address}
-                  className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                  className="overflow-hidden rounded-[1.5rem] border-2 border-slate-950 bg-white shadow-[6px_6px_0_#06111f] transition hover:-translate-y-1"
                 >
-                  {/* Pool Header */}
-                  <div className="p-4 sm:p-6 border-b border-gray-100">
+                  <div className="border-b-2 border-slate-950 bg-[#f8fbff] p-5">
                     <div className="flex items-start justify-between mb-4">
                       <div>
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-900">{pool.name}</h3>
-                        <p className="text-xs sm:text-sm text-gray-500 font-mono">
+                        <p className="protocol-font text-xs font-black uppercase text-slate-400">object::pool</p>
+                        <h3 className="mt-2 text-2xl font-black tracking-[-0.03em] text-slate-950">{pool.name}</h3>
+                        <p className="protocol-font mt-1 text-xs font-bold text-slate-500">
                           {pool.address.slice(0, 6)}...{pool.address.slice(-4)}
                         </p>
                       </div>
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                        className={`protocol-font rounded-full border-2 border-slate-950 px-3 py-1 text-xs font-black ${getStatusColor(
                           pool.status
                         )}`}
                       >
@@ -306,49 +308,35 @@ export default function PoolsPage() {
                     </div>
 
                     {/* APY Badge */}
-                    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 px-3 py-2 bg-sky-50 rounded-xl w-fit">
-                      <svg
-                        className="w-4 h-4 text-sky-600 flex-shrink-0"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path
-                          d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      <span className="text-xs sm:text-sm font-semibold text-sky-700">{pool.apy}% APY</span>
-                      <span className="text-xs text-sky-500 whitespace-nowrap">(Yield signal)</span>
+                    <div className="flex w-fit flex-wrap items-center gap-2 rounded-full border-2 border-slate-950 bg-[#fff1c7] px-3 py-2">
+                      <span className="protocol-font text-xs font-black text-slate-950">{pool.apy}% APY</span>
+                      <span className="protocol-font whitespace-nowrap text-xs font-black text-slate-500">Yield signal</span>
                     </div>
                   </div>
 
-                  {/* Pool Stats */}
-                  <div className="p-4 sm:p-6 space-y-4">
+                  <div className="space-y-4 p-5">
                     <div className="grid grid-cols-2 gap-3 sm:gap-4">
                       <div>
-                        <p className="text-xs text-gray-500 mb-1">Deposit</p>
-                        <p className="text-base sm:text-lg font-bold text-gray-900">{pool.depositAmount} USDC</p>
+                        <p className="protocol-font mb-1 text-xs font-black text-slate-400">DEPOSIT</p>
+                        <p className="protocol-font text-lg font-black text-slate-950">{pool.depositAmount} USDC</p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 mb-1">Cycle</p>
-                        <p className="text-base sm:text-lg font-bold text-gray-900">{pool.cycleDuration} days</p>
+                        <p className="protocol-font mb-1 text-xs font-black text-slate-400">CYCLE</p>
+                        <p className="protocol-font text-lg font-black text-slate-950">{pool.cycleDuration} days</p>
                       </div>
                     </div>
 
                     {/* Participants Progress */}
                     <div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs text-gray-500">Participants</span>
-                        <span className="text-sm font-semibold text-gray-900">
+                        <span className="protocol-font text-xs font-black text-slate-500">Participants</span>
+                        <span className="protocol-font text-sm font-black text-slate-950">
                           {pool.currentParticipants}/{pool.maxParticipants}
                         </span>
                       </div>
-                      <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-3 w-full overflow-hidden rounded-full border-2 border-slate-950 bg-slate-100">
                         <div
-                          className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-500"
+                          className="h-full bg-teal-400 transition-all duration-500"
                           style={{
                             width: `${(pool.currentParticipants / pool.maxParticipants) * 100}%`,
                           }}
@@ -357,10 +345,10 @@ export default function PoolsPage() {
                     </div>
 
                     {/* Total Funds */}
-                    <div className="p-3 bg-gray-50 rounded-xl">
+                    <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">Total Pool Funds</span>
-                        <span className="text-lg font-bold text-gray-900">
+                        <span className="protocol-font text-xs font-black text-slate-500">Total Pool Funds</span>
+                        <span className="protocol-font text-lg font-black text-slate-950">
                           ${pool.totalFunds.toFixed(2)}
                         </span>
                       </div>
@@ -374,8 +362,8 @@ export default function PoolsPage() {
                           disabled={!isConnected}
                           className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 min-h-[44px] text-sm sm:text-base ${
                             isConnected
-                              ? "bg-gradient-to-r from-teal-500 to-sky-500 text-white hover:shadow-lg hover:shadow-teal-500/25"
-                              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                              ? "border-2 border-slate-950 bg-sky-400 text-slate-950 shadow-[3px_3px_0_#06111f] hover:-translate-y-0.5"
+                              : "cursor-not-allowed border-2 border-slate-200 bg-slate-100 text-slate-400"
                           }`}
                         >
                           {isConnected ? "Join Pool" : "Connect Wallet to Join"}
@@ -385,10 +373,10 @@ export default function PoolsPage() {
                         href={`/pools/${pool.address}`}
                         className={`block w-full py-3 text-center rounded-xl font-semibold transition-all duration-300 min-h-[44px] text-sm sm:text-base ${
                           pool.status === "open"
-                            ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            ? "border-2 border-slate-950 bg-white text-slate-950 hover:bg-[#dff8ff]"
                             : pool.status === "active"
-                            ? "bg-blue-50 text-blue-700 hover:bg-blue-100"
-                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                            ? "border-2 border-slate-950 bg-[#dff8ff] text-slate-950 hover:bg-sky-200"
+                            : "border-2 border-slate-950 bg-slate-100 text-slate-600 hover:bg-slate-200"
                         }`}
                       >
                         View Details
@@ -402,10 +390,10 @@ export default function PoolsPage() {
 
           {/* Empty State */}
           {!poolsLoading && filteredPools.length === 0 && (
-            <div className="text-center py-16">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+            <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white py-16 text-center shadow-[6px_6px_0_#06111f]">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-slate-950 bg-[#dff8ff]">
                 <svg
-                  className="w-8 h-8 text-gray-400"
+                  className="h-8 w-8 text-slate-950"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -418,8 +406,8 @@ export default function PoolsPage() {
                   />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No pools found</h3>
-              <p className="text-gray-500">
+              <h3 className="mb-2 text-2xl font-black tracking-[-0.03em] text-slate-950">No pools found</h3>
+              <p className="font-semibold text-slate-500">
                 {pools && pools.length === 0
                   ? "No pools have been created yet. Be the first to create one!"
                   : `There are no ${filter} pools at the moment.`}
@@ -436,15 +424,20 @@ export default function PoolsPage() {
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setSelectedPool(null)}
           />
-          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[85vh] overflow-y-auto p-4 sm:p-6">
+          <div className="relative max-h-[85vh] w-full max-w-md overflow-y-auto rounded-[1.75rem] border-2 border-slate-950 bg-[#fbf7ed] p-5 shadow-[8px_8px_0_#06111f] sm:p-6">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900">Join {selectedPool.name}</h3>
+              <div>
+                <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-sky-700">
+                  join_cycle
+                </p>
+                <h3 className="mt-1 text-2xl font-black tracking-[-0.04em] text-slate-950">Join {selectedPool.name}</h3>
+              </div>
               <button
                 onClick={() => setSelectedPool(null)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border-2 border-slate-950 bg-sky-400 p-2 text-slate-950 transition hover:-translate-y-0.5"
               >
                 <svg
-                  className="w-5 h-5 text-gray-500"
+                  className="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -460,33 +453,33 @@ export default function PoolsPage() {
             </div>
 
             <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
-              <div className="p-3 sm:p-4 bg-gray-50 rounded-xl">
-                <p className="text-xs sm:text-sm text-gray-500 mb-1">Monthly Deposit</p>
-                <p className="text-xl sm:text-2xl font-bold text-gray-900">
+              <div className="rounded-2xl border-2 border-slate-950 bg-white p-3 sm:p-4">
+                <p className="protocol-font mb-1 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Monthly Deposit</p>
+                <p className="protocol-font text-xl font-black text-slate-950 sm:text-2xl">
                   {selectedPool.depositAmount} USDC
                 </p>
               </div>
 
-              <div className="p-3 sm:p-4 bg-blue-50 rounded-xl">
-                <p className="text-xs sm:text-sm text-blue-600 mb-1">Required Collateral</p>
-                <p className="text-xl sm:text-2xl font-bold text-blue-700">
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-3 sm:p-4">
+                <p className="protocol-font mb-1 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Required Collateral</p>
+                <p className="protocol-font text-xl font-black text-slate-950 sm:text-2xl">
                   {requiredCollateral
                     ? `${requiredCollateral} USDC`
                     : `${Math.ceil(selectedPool.depositAmount * (selectedPool.maxParticipants - 1) * 1.25)} USDC`}
                 </p>
-                <p className="text-xs text-blue-500 mt-1">125% of remaining deposits - returned at end + yield bonus</p>
+                <p className="mt-1 text-xs font-semibold text-slate-600">125% of remaining deposits, returned at cycle end plus yield bonus</p>
               </div>
 
-              <div className="p-3 sm:p-4 bg-purple-50 rounded-xl">
-                <p className="text-xs sm:text-sm text-purple-600 mb-1">Estimated APY</p>
-                <p className="text-xl sm:text-2xl font-bold text-purple-700">{selectedPool.apy}%</p>
-                <p className="text-xs text-purple-500 mt-1">Yield routing placeholder for Suivan integration</p>
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#fff1c7] p-3 sm:p-4">
+                <p className="protocol-font mb-1 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Estimated APY</p>
+                <p className="protocol-font text-xl font-black text-slate-950 sm:text-2xl">{selectedPool.apy}%</p>
+                <p className="mt-1 text-xs font-semibold text-slate-600">Yield routing placeholder for Suivan integration</p>
               </div>
 
               {/* Balance Warning */}
               {!hasEnoughBalance && requiredCollateral && (
-                <div className="p-3 sm:p-4 bg-red-50 rounded-xl">
-                  <p className="text-xs sm:text-sm text-red-600">
+                <div className="rounded-2xl border-2 border-slate-950 bg-[#ffe0d8] p-3 sm:p-4">
+                  <p className="text-xs font-bold text-slate-700 sm:text-sm">
                     Insufficient USDC balance. You need {requiredCollateral} USDC but only have{" "}
                     {usdcBalance.toFixed(2)} USDC.
                   </p>
@@ -495,15 +488,15 @@ export default function PoolsPage() {
 
               {/* Allowance Status */}
               {hasEnoughBalance && (
-                <div className="p-3 sm:p-4 bg-green-50 rounded-xl">
+                <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-3 sm:p-4">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs sm:text-sm text-green-600">USDC Allowance</span>
-                    <span className="text-xs sm:text-sm font-semibold text-green-700">
+                    <span className="protocol-font text-xs font-black uppercase tracking-[0.12em] text-slate-500 sm:text-sm">USDC Allowance</span>
+                    <span className="protocol-font text-xs font-black text-slate-950 sm:text-sm">
                       {allowance.toFixed(2)} / {requiredCollateral?.toFixed(2) || "0"} USDC
                     </span>
                   </div>
                   {hasEnoughAllowance && (
-                    <p className="text-xs text-green-500 mt-1">Ready to join!</p>
+                    <p className="mt-1 text-xs font-semibold text-slate-600">Ready to join.</p>
                   )}
                 </div>
               )}
@@ -516,13 +509,13 @@ export default function PoolsPage() {
                   disabled={!hasEnoughBalance || approving || confirmingApprove}
                   className={`w-full py-3 rounded-xl font-semibold transition-all min-h-[44px] text-sm sm:text-base ${
                     !hasEnoughBalance || approving || confirmingApprove
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-teal-500 to-sky-500 text-white hover:shadow-lg"
+                      ? "cursor-not-allowed border-2 border-slate-200 bg-slate-100 text-slate-400"
+                      : "border-2 border-slate-950 bg-sky-400 text-slate-950 shadow-[3px_3px_0_#06111f] hover:-translate-y-0.5"
                   }`}
                 >
                   {approving || confirmingApprove ? (
                     <span className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-b-white"></div>
                       {approving ? "Approving..." : "Confirming..."}
                     </span>
                   ) : (
@@ -535,13 +528,13 @@ export default function PoolsPage() {
                   disabled={joining || confirmingJoin}
                   className={`w-full py-3 rounded-xl font-semibold transition-all min-h-[44px] text-sm sm:text-base ${
                     joining || confirmingJoin
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-teal-500 to-sky-500 text-white hover:shadow-lg"
+                      ? "cursor-not-allowed border-2 border-slate-200 bg-slate-100 text-slate-400"
+                      : "border-2 border-slate-950 bg-sky-400 text-slate-950 shadow-[3px_3px_0_#06111f] hover:-translate-y-0.5"
                   }`}
                 >
                   {joining || confirmingJoin ? (
                     <span className="flex items-center justify-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-b-white"></div>
                       {joining ? "Joining..." : "Confirming..."}
                     </span>
                   ) : (
@@ -551,7 +544,7 @@ export default function PoolsPage() {
               )}
             </div>
 
-            <p className="mt-4 text-center text-xs text-gray-500">
+            <p className="mt-4 text-center text-xs font-semibold text-slate-500">
               By joining, you agree to make monthly deposits for {selectedPool.maxParticipants}{" "}
               months
             </p>
@@ -566,15 +559,20 @@ export default function PoolsPage() {
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setShowCreateModal(false)}
           />
-          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[85vh] overflow-y-auto p-4 sm:p-6">
+          <div className="relative max-h-[85vh] w-full max-w-md overflow-y-auto rounded-[1.75rem] border-2 border-slate-950 bg-[#fbf7ed] p-5 shadow-[8px_8px_0_#06111f] sm:p-6">
             <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900">Create Custom Pool</h3>
+              <div>
+                <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-sky-700">
+                  create_pool
+                </p>
+                <h3 className="mt-1 text-2xl font-black tracking-[-0.04em] text-slate-950">Create Custom Pool</h3>
+              </div>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border-2 border-slate-950 bg-sky-400 p-2 text-slate-950 transition hover:-translate-y-0.5"
               >
                 <svg
-                  className="w-5 h-5 text-gray-500"
+                  className="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -592,7 +590,7 @@ export default function PoolsPage() {
             <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
               {/* Deposit Amount */}
               <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                <label className="protocol-font mb-2 block text-xs font-black uppercase tracking-[0.14em] text-slate-500 sm:text-sm">
                   Monthly Deposit (USDC)
                 </label>
                 <input
@@ -602,13 +600,13 @@ export default function PoolsPage() {
                   onChange={(e) =>
                     setCreateForm({ ...createForm, depositAmount: Number(e.target.value) })
                   }
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base min-h-[44px]"
+                  className="min-h-[44px] w-full rounded-2xl border-2 border-slate-950 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none focus:bg-[#dff8ff] sm:text-base"
                 />
               </div>
 
               {/* Max Participants */}
               <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                <label className="protocol-font mb-2 block text-xs font-black uppercase tracking-[0.14em] text-slate-500 sm:text-sm">
                   Max Participants (2-50)
                 </label>
                 <input
@@ -619,13 +617,13 @@ export default function PoolsPage() {
                   onChange={(e) =>
                     setCreateForm({ ...createForm, maxParticipants: Number(e.target.value) })
                   }
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base min-h-[44px]"
+                  className="min-h-[44px] w-full rounded-2xl border-2 border-slate-950 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none focus:bg-[#dff8ff] sm:text-base"
                 />
               </div>
 
               {/* Cycle Duration */}
               <div>
-                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                <label className="protocol-font mb-2 block text-xs font-black uppercase tracking-[0.14em] text-slate-500 sm:text-sm">
                   Cycle Duration (Days)
                 </label>
                 <input
@@ -635,27 +633,27 @@ export default function PoolsPage() {
                   onChange={(e) =>
                     setCreateForm({ ...createForm, cycleDuration: Number(e.target.value) })
                   }
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base min-h-[44px]"
+                  className="min-h-[44px] w-full rounded-2xl border-2 border-slate-950 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none focus:bg-[#dff8ff] sm:text-base"
                 />
               </div>
 
               {/* Summary */}
-              <div className="p-3 sm:p-4 bg-gray-50 rounded-xl space-y-2">
+              <div className="space-y-2 rounded-2xl border-2 border-slate-950 bg-white p-3 sm:p-4">
                 <div className="flex justify-between text-xs sm:text-sm gap-2">
-                  <span className="text-gray-500">Total Pool Value</span>
-                  <span className="font-semibold">
+                  <span className="font-semibold text-slate-500">Total Pool Value</span>
+                  <span className="protocol-font font-black text-slate-950">
                     {createForm.depositAmount * createForm.maxParticipants} USDC
                   </span>
                 </div>
                 <div className="flex justify-between text-xs sm:text-sm gap-2">
-                  <span className="text-gray-500">Pool Duration</span>
-                  <span className="font-semibold">
+                  <span className="font-semibold text-slate-500">Pool Duration</span>
+                  <span className="protocol-font font-black text-slate-950">
                     {createForm.cycleDuration * createForm.maxParticipants} days
                   </span>
                 </div>
                 <div className="flex justify-between text-xs sm:text-sm gap-2">
-                  <span className="text-gray-500">Required Collateral (125%)</span>
-                  <span className="font-semibold">
+                  <span className="font-semibold text-slate-500">Required Collateral (125%)</span>
+                  <span className="protocol-font font-black text-slate-950">
                     {Math.ceil(createForm.depositAmount * (createForm.maxParticipants - 1) * 1.25)} USDC
                   </span>
                 </div>
@@ -667,13 +665,13 @@ export default function PoolsPage() {
               disabled={creating || confirmingCreate}
               className={`w-full py-3 rounded-xl font-semibold transition-all min-h-[44px] text-sm sm:text-base ${
                 creating || confirmingCreate
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-teal-500 to-sky-500 text-white hover:shadow-lg"
+                  ? "cursor-not-allowed border-2 border-slate-200 bg-slate-100 text-slate-400"
+                  : "border-2 border-slate-950 bg-sky-400 text-slate-950 shadow-[3px_3px_0_#06111f] hover:-translate-y-0.5"
               }`}
             >
               {creating || confirmingCreate ? (
                 <span className="flex items-center justify-center gap-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-b-white"></div>
                   {creating ? "Creating..." : "Confirming..."}
                 </span>
               ) : (

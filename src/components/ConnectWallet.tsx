@@ -38,7 +38,7 @@ export default function ConnectWallet({ variant = "header" }: ConnectWalletProps
       <div className="relative">
         <button
           onClick={() => setShowDropdown(!showDropdown)}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-green-500 via-blue-500 to-orange-500 text-white hover:shadow-lg hover:shadow-green-500/25 shadow-md ${
+          className={`protocol-font flex items-center gap-2 rounded-full border-2 border-slate-950 bg-sky-400 px-4 py-2.5 text-sm font-black text-slate-950 shadow-[3px_3px_0_#06111f] transition-all duration-300 hover:-translate-y-0.5 ${
             variant === "mobile" ? "w-full justify-center" : ""
           }`}
         >
@@ -56,14 +56,14 @@ export default function ConnectWallet({ variant = "header" }: ConnectWalletProps
               className="fixed inset-0 z-[195]"
               onClick={() => setShowDropdown(false)}
             />
-            <div className={`absolute ${variant === "mobile" ? "left-0 right-0" : "right-0"} mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 z-[210]`}>
+            <div className={`absolute ${variant === "mobile" ? "left-0 right-0" : "right-0"} z-[210] mt-2 w-64 rounded-2xl border-2 border-slate-950 bg-white p-4 shadow-[5px_5px_0_#06111f]`}>
               <div className="mb-4">
-                <p className="text-xs text-gray-500 mb-1">Connected Wallet</p>
-                <p className="text-sm font-mono text-gray-900 break-all">{address}</p>
+                <p className="protocol-font mb-1 text-xs font-black uppercase text-slate-400">Connected Wallet</p>
+                <p className="protocol-font break-all text-sm font-bold text-slate-950">{address}</p>
               </div>
-              <div className="mb-4 p-3 bg-gray-50 rounded-xl">
-                <p className="text-xs text-gray-500 mb-1">Balance</p>
-                <p className="text-lg font-semibold text-gray-900">
+              <div className="mb-4 rounded-xl border-2 border-slate-950 bg-[#fbf7ed] p-3">
+                <p className="protocol-font mb-1 text-xs font-black uppercase text-slate-400">Balance</p>
+                <p className="protocol-font text-lg font-black text-slate-950">
                   {formatBalance(balance?.value, balance?.decimals)} {balance?.symbol || "MNT"}
                 </p>
               </div>
@@ -72,7 +72,7 @@ export default function ConnectWallet({ variant = "header" }: ConnectWalletProps
                   disconnect();
                   setShowDropdown(false);
                 }}
-                className="w-full py-2.5 px-4 bg-red-50 text-red-600 rounded-xl font-medium hover:bg-red-100 transition-colors"
+                className="protocol-font w-full rounded-xl border-2 border-slate-950 bg-white px-4 py-2.5 font-black text-slate-950 transition-colors hover:bg-[#fff1c7]"
               >
                 Disconnect
               </button>
@@ -88,10 +88,10 @@ export default function ConnectWallet({ variant = "header" }: ConnectWalletProps
     <>
       <button
         onClick={() => setShowModal(true)}
-        className={`flex items-center gap-2 text-sm font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 ${
+        className={`protocol-font flex items-center gap-2 text-sm font-black transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0 ${
           variant === "mobile"
-            ? "w-full py-3 px-5 rounded-full justify-center bg-gradient-to-r from-green-500 via-blue-500 to-orange-500 text-white hover:shadow-lg hover:shadow-green-500/25"
-            : "px-5 py-2.5 rounded-full bg-gradient-to-r from-green-500 via-blue-500 to-orange-500 text-white shadow-md hover:shadow-lg hover:shadow-green-500/25"
+            ? "w-full justify-center rounded-full border-2 border-slate-950 bg-sky-400 px-5 py-3 text-slate-950 shadow-[3px_3px_0_#06111f]"
+            : "rounded-full border-2 border-slate-950 bg-sky-400 px-5 py-2.5 text-slate-950 shadow-[3px_3px_0_#06111f]"
         }`}
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -110,7 +110,7 @@ export default function ConnectWallet({ variant = "header" }: ConnectWalletProps
         <div className="fixed inset-0 z-[300]">
           {/* Backdrop - full screen dark overlay */}
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 bg-slate-950/50 backdrop-blur-sm"
             onClick={() => setShowModal(false)}
           />
 
@@ -120,18 +120,17 @@ export default function ConnectWallet({ variant = "header" }: ConnectWalletProps
             onClick={() => setShowModal(false)}
           >
             <div
-              className="relative bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl p-5 sm:p-6 max-h-[85vh] overflow-y-auto animate-slideUp sm:animate-fadeIn"
-              style={{ boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.15)' }}
+              className="relative max-h-[85vh] w-full overflow-y-auto rounded-t-3xl border-2 border-slate-950 bg-white p-5 shadow-[8px_8px_0_#06111f] animate-slideUp sm:max-w-md sm:rounded-3xl sm:p-6 sm:animate-fadeIn"
               onClick={(e) => e.stopPropagation()}
             >
             {/* Mobile drag indicator */}
             <div className="flex justify-center mb-3 sm:hidden">
-              <div className="w-10 h-1 bg-gray-300 rounded-full" />
+              <div className="h-1 w-10 rounded-full bg-slate-300" />
             </div>
 
             {/* Header */}
             <div className="flex items-center justify-between mb-5 sm:mb-6">
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900">Connect Wallet</h3>
+              <h3 className="text-2xl font-black tracking-[-0.04em] text-slate-950">Connect Wallet</h3>
               <button
                 onClick={() => setShowModal(false)}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
@@ -158,9 +157,9 @@ export default function ConnectWallet({ variant = "header" }: ConnectWalletProps
                       setShowModal(false);
                     }}
                     disabled={isPending}
-                    className="w-full flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-2xl transition-all duration-200 group disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="group flex w-full items-center gap-4 rounded-2xl border-2 border-slate-950 bg-[#f8fbff] p-4 transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#dff8ff] disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-slate-950 bg-white transition-shadow">
                     {connector.name === "MetaMask" && (
                       <svg className="w-8 h-8" viewBox="0 0 40 40" fill="none">
                         <path d="M36.5 3.5L22 14l2.7-6.4L36.5 3.5z" fill="#E17726"/>
@@ -192,8 +191,8 @@ export default function ConnectWallet({ variant = "header" }: ConnectWalletProps
                     )}
                   </div>
                   <div className="flex-1 text-left">
-                    <p className="font-semibold text-gray-900">{connector.name}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-black text-slate-950">{connector.name}</p>
+                    <p className="text-sm font-semibold text-slate-500">
                       {connector.name === "MetaMask" && "Browser Extension"}
                       {connector.name === "WalletConnect" && "Mobile & Desktop"}
                       {connector.name !== "MetaMask" && connector.name !== "WalletConnect" && "Connect"}
@@ -207,7 +206,7 @@ export default function ConnectWallet({ variant = "header" }: ConnectWalletProps
             </div>
 
             {/* Footer */}
-            <p className="mt-6 text-center text-sm text-gray-500">
+            <p className="mt-6 text-center text-sm font-semibold text-slate-500">
               By connecting, you agree to our Terms of Service
             </p>
           </div>

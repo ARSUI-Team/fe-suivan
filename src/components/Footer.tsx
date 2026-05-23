@@ -16,7 +16,7 @@ const communityLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-950 px-5 py-14 text-white md:px-10 lg:px-12">
+    <footer className="border-t-2 border-slate-950 bg-slate-950 px-5 py-14 text-white md:px-10 lg:px-12">
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[1.1fr_0.9fr]">
         <div>
           <div className="mb-5 flex items-center gap-3">
@@ -38,7 +38,7 @@ export default function Footer() {
           <div className="flex flex-wrap gap-3">
             {links.map((link) => (
               <Link
-                className="rounded-full border border-white/10 px-4 py-2 text-sm font-bold text-slate-300 transition hover:border-sky-400 hover:text-white"
+                className="protocol-font rounded-full border border-white/20 px-4 py-2 text-xs font-black text-slate-300 transition hover:border-sky-400 hover:text-white"
                 href={link.href}
                 key={link.href}
               >
@@ -49,7 +49,7 @@ export default function Footer() {
           <div className="flex flex-wrap gap-3">
             {communityLinks.map((link) => (
               <a
-                className="rounded-full border border-white/10 px-4 py-2 text-sm font-bold text-slate-300 transition hover:border-sky-400 hover:text-white"
+                className="protocol-font rounded-full border border-white/20 px-4 py-2 text-xs font-black text-slate-300 transition hover:border-sky-400 hover:text-white"
                 href={link.href}
                 key={link.href}
                 rel="noopener noreferrer"
@@ -60,7 +60,7 @@ export default function Footer() {
             ))}
           </div>
           <a
-            className="inline-flex w-fit items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-300"
+            className="protocol-font inline-flex w-fit items-center gap-2 rounded-full border-2 border-white bg-white px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-300"
             href="https://sui.io"
             rel="noopener noreferrer"
             target="_blank"

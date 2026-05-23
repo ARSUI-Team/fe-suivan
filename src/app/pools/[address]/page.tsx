@@ -148,11 +148,11 @@ export default function PoolDetailPage() {
 
   if (poolLoading) {
     return (
-      <main className="min-h-screen bg-gray-50">
+      <main className="min-h-screen bg-[#fbf7ed]">
         <Header />
-        <div className="pt-32 pb-16 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
-          <span className="ml-4 text-gray-600">Loading pool data...</span>
+        <div className="flex items-center justify-center pb-16 pt-32">
+          <div className="h-12 w-12 animate-spin rounded-full border-2 border-slate-950 border-b-sky-400"></div>
+          <span className="protocol-font ml-4 text-sm font-black text-slate-600">Loading pool data...</span>
         </div>
         <Footer />
       </main>
@@ -160,30 +160,30 @@ export default function PoolDetailPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-[#fbf7ed] text-slate-950">
       <Header />
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-8 bg-[radial-gradient(circle_at_20%_0%,rgba(56,189,248,0.24),transparent_34%),linear-gradient(135deg,#04111f,#0f2f2c_55%,#07111e)]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <Link href="/pools" className="inline-flex items-center text-gray-400 hover:text-white mb-6 transition-colors">
+      <section className="relative isolate overflow-hidden px-5 pb-10 pt-32 md:px-10 lg:px-12">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_22%_18%,rgba(94,200,255,0.32),transparent_30%),linear-gradient(180deg,#fbf7ed,#f8fbff)]" />
+        <div className="mx-auto max-w-6xl">
+          <Link href="/pools" className="protocol-font mb-6 inline-flex items-center rounded-full border-2 border-slate-950 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5">
             <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             Back to Pools
           </Link>
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl md:text-4xl font-bold text-white" style={{ fontFamily: "var(--font-space), sans-serif" }}>
+              <div className="mb-4 flex items-center gap-3">
+                <h1 className="text-5xl font-black leading-[0.95] tracking-[-0.06em] text-slate-950 md:text-7xl">
                   {poolName}
                 </h1>
-                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(status)}`}>
+                <span className={`protocol-font rounded-full border-2 border-slate-950 px-3 py-1 text-xs font-black ${getStatusColor(status)}`}>
                   {status.charAt(0).toUpperCase() + status.slice(1)}
                 </span>
               </div>
-              <div className="text-gray-400 font-mono text-sm inline-flex items-center gap-1.5">
+              <div className="protocol-font inline-flex max-w-full items-center gap-1.5 overflow-hidden rounded-full border-2 border-slate-950 bg-white px-4 py-2 text-xs font-black text-slate-500 shadow-[4px_4px_0_#06111f]">
                 {poolAddress}
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-9 4h12M7 8h10" />
@@ -191,7 +191,7 @@ export default function PoolDetailPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <SharePool
                 poolAddress={poolAddress}
                 poolName={poolName}
@@ -206,56 +206,55 @@ export default function PoolDetailPage() {
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="py-8">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="mb-6 rounded-3xl border border-sky-100 bg-white p-5 shadow-sm">
-            <p className="protocol-font text-xs font-bold uppercase tracking-[0.2em] text-sky-600">
+      <section className="px-5 py-8 md:px-10 lg:px-12">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-6 rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[5px_5px_0_#06111f]">
+            <p className="protocol-font text-xs font-black uppercase tracking-[0.2em] text-sky-700">
               Pool detail boundary
             </p>
-            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-500">
+            <p className="mt-2 max-w-4xl text-sm font-semibold leading-6 text-slate-500">
               Detail data, member state, deposits, yield signals, and settlement status are
               isolated here so the frontend can connect cleanly to Suivan&apos;s upcoming Sui API
               and contract modules.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             {/* Left Column - Pool Info */}
             <div className="lg:col-span-2 space-y-6">
               {/* Pool Stats */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">Pool Information</h2>
+              <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
+                <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Pool Information</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="p-4 bg-gray-50 rounded-xl">
-                    <p className="text-sm text-gray-500 mb-1">Monthly Deposit</p>
-                    <p className="text-2xl font-bold text-gray-900">{depositAmount} USDC</p>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">DEPOSIT</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">{depositAmount} USDC</p>
                   </div>
-                  <div className="p-4 bg-gray-50 rounded-xl">
-                    <p className="text-sm text-gray-500 mb-1">Participants</p>
-                    <p className="text-2xl font-bold text-gray-900">{currentParticipants}/{maxParticipants}</p>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">MEMBERS</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">{currentParticipants}/{maxParticipants}</p>
                   </div>
-                  <div className="p-4 bg-gray-50 rounded-xl">
-                    <p className="text-sm text-gray-500 mb-1">Current Cycle</p>
-                    <p className="text-2xl font-bold text-gray-900">{currentCycle}/{maxParticipants}</p>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#fff1c7] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">CYCLE</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">{currentCycle}/{maxParticipants}</p>
                   </div>
-                  <div className="p-4 bg-gray-50 rounded-xl">
-                    <p className="text-sm text-gray-500 mb-1">Total Funds</p>
-                    <p className="text-2xl font-bold text-gray-900">${totalFunds.toFixed(2)}</p>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">FUNDS</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">${totalFunds.toFixed(2)}</p>
                   </div>
                 </div>
 
                 {/* Progress Bar */}
                 <div className="mt-6">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm text-gray-500">Pool Capacity</span>
-                    <span className="text-sm font-semibold text-gray-900">
+                    <span className="protocol-font text-xs font-black text-slate-500">Pool Capacity</span>
+                    <span className="protocol-font text-sm font-black text-slate-950">
                       {Math.round((currentParticipants / maxParticipants) * 100)}%
                     </span>
                   </div>
-                  <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-3 w-full overflow-hidden rounded-full border-2 border-slate-950 bg-slate-100">
                     <div
-                      className="h-full bg-gradient-to-r from-green-500 to-blue-500 rounded-full transition-all duration-500"
+                      className="h-full bg-teal-400 transition-all duration-500"
                       style={{ width: `${(currentParticipants / maxParticipants) * 100}%` }}
                     />
                   </div>
@@ -263,23 +262,23 @@ export default function PoolDetailPage() {
               </div>
 
               {/* Yield Info */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-gray-900">Yield and Cycle Signals</h2>
+                  <h2 className="text-2xl font-black tracking-[-0.04em] text-slate-950">Yield and Cycle Signals</h2>
                   <SuiFeeProfile transactionType="join" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 bg-purple-50 rounded-xl">
-                    <p className="text-sm text-purple-600 mb-1">Current Yield</p>
-                    <p className="text-2xl font-bold text-purple-700">${currentYield.toFixed(2)}</p>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#e8e0ff] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">YIELD</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">${currentYield.toFixed(2)}</p>
                   </div>
-                  <div className="p-4 bg-green-50 rounded-xl">
-                    <p className="text-sm text-green-600 mb-1">Est. APY</p>
-                    <p className="text-2xl font-bold text-green-700">8.5%</p>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">EST APY</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">8.5%</p>
                   </div>
-                  <div className="p-4 bg-blue-50 rounded-xl">
-                    <p className="text-sm text-blue-600 mb-1">Collateral Required</p>
-                    <p className="text-2xl font-bold text-blue-700">{requiredCollateral?.toFixed(0) || 0} USDC</p>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">COLLATERAL</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">{requiredCollateral?.toFixed(0) || 0} USDC</p>
                   </div>
                 </div>
               </div>
@@ -288,8 +287,8 @@ export default function PoolDetailPage() {
               <PoolAnalyticsChart title={`${poolName} Performance`} poolAddress={poolAddress} />
 
               {/* Participants List */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-4">
+              <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
+                <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">
                   Participants ({participantCount})
                 </h2>
                 {participantsLoading ? (
@@ -303,20 +302,20 @@ export default function PoolDetailPage() {
                         key={addr}
                         className={`flex items-center justify-between p-4 rounded-xl ${
                           addr.toLowerCase() === address?.toLowerCase()
-                            ? "bg-green-50 border border-green-200"
-                            : "bg-gray-50"
+                            ? "border-2 border-slate-950 bg-[#d9f8df]"
+                            : "border-2 border-slate-950 bg-[#f8fbff]"
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-green-400 to-blue-400 flex items-center justify-center text-white font-bold">
+                          <div className="protocol-font flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-950 bg-sky-400 font-black text-slate-950">
                             {index + 1}
                           </div>
                           <div>
-                            <p className="font-mono text-sm text-gray-900">
+                            <p className="protocol-font text-sm font-bold text-slate-950">
                               {addr.slice(0, 6)}...{addr.slice(-4)}
                             </p>
                             {addr.toLowerCase() === address?.toLowerCase() && (
-                              <span className="text-xs text-green-600 font-semibold">You</span>
+                              <span className="protocol-font text-xs font-black text-teal-700">You</span>
                             )}
                           </div>
                         </div>
@@ -338,33 +337,33 @@ export default function PoolDetailPage() {
             <div className="space-y-6">
               {/* User Status Card */}
               {isConnected && (
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4">Your Status</h2>
+                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
+                  <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Your Status</h2>
 
                   {isParticipant ? (
                     <div className="space-y-4">
-                      <div className="p-4 bg-green-50 rounded-xl">
+                      <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
-                          <span className="font-semibold text-green-700">Active Participant</span>
+                          <span className="font-black text-slate-950">Active Participant</span>
                         </div>
-                        <p className="text-sm text-green-600">You are part of this ROSCA pool</p>
+                        <p className="text-sm font-semibold text-slate-600">You are part of this ROSCA pool</p>
                       </div>
 
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Collateral Locked</span>
-                          <span className="font-semibold">{participantInfo?.collateralAmount.toFixed(2)} USDC</span>
+                          <span className="protocol-font text-xs font-black text-slate-500">Collateral Locked</span>
+                          <span className="protocol-font font-black">{participantInfo?.collateralAmount.toFixed(2)} USDC</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Total Deposited</span>
-                          <span className="font-semibold">{participantInfo?.totalDeposited.toFixed(2)} USDC</span>
+                          <span className="protocol-font text-xs font-black text-slate-500">Total Deposited</span>
+                          <span className="protocol-font font-black">{participantInfo?.totalDeposited.toFixed(2)} USDC</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="text-gray-500">Received Payout</span>
-                          <span className={`font-semibold ${participantInfo?.hasReceivedPayout ? "text-green-600" : "text-gray-600"}`}>
+                          <span className="protocol-font text-xs font-black text-slate-500">Received Payout</span>
+                          <span className={`protocol-font font-black ${participantInfo?.hasReceivedPayout ? "text-teal-700" : "text-slate-600"}`}>
                             {participantInfo?.hasReceivedPayout ? "Yes" : "Not yet"}
                           </span>
                         </div>
@@ -374,24 +373,24 @@ export default function PoolDetailPage() {
                       {status === "active" && !hasDeposited && (
                         <button
                           onClick={() => setShowDepositModal(true)}
-                          className="w-full py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+                          className="protocol-font w-full rounded-xl border-2 border-slate-950 bg-sky-400 py-3 font-black text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5"
                         >
                           Make Monthly Deposit
                         </button>
                       )}
 
                       {status === "active" && hasDeposited && (
-                        <div className="p-4 bg-blue-50 rounded-xl text-center">
-                          <p className="text-blue-700 font-semibold">Deposit complete for this cycle</p>
-                          <p className="text-sm text-blue-500">Wait for next cycle</p>
+                        <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4 text-center">
+                          <p className="font-black text-slate-950">Deposit complete for this cycle</p>
+                          <p className="text-sm font-semibold text-slate-500">Wait for next cycle</p>
                         </div>
                       )}
 
                       {/* Claim section for completed pool */}
                       {status === "completed" && (participantInfo?.collateralAmount ?? 0) > 0 && (
-                        <div className="p-4 bg-yellow-50 rounded-xl">
-                          <h3 className="font-semibold text-yellow-700 mb-2">Collateral Available</h3>
-                          <p className="text-sm text-yellow-600 mb-3">
+                        <div className="rounded-2xl border-2 border-slate-950 bg-[#fff1c7] p-4">
+                          <h3 className="mb-2 font-black text-slate-950">Collateral Available</h3>
+                          <p className="mb-3 text-sm font-semibold text-slate-600">
                             Your collateral + yield bonus has been returned automatically when the pool ended.
                           </p>
                         </div>
@@ -399,14 +398,14 @@ export default function PoolDetailPage() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      <div className="p-4 bg-gray-50 rounded-xl">
-                        <p className="text-gray-600">You are not a participant in this pool.</p>
+                      <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
+                        <p className="font-semibold text-slate-600">You are not a participant in this pool.</p>
                       </div>
 
                       {status === "open" && (
                         <button
                           onClick={() => setShowJoinModal(true)}
-                          className="w-full py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+                          className="protocol-font w-full rounded-xl border-2 border-slate-950 bg-sky-400 py-3 font-black text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5"
                         >
                           Join This Pool
                         </button>
@@ -418,20 +417,20 @@ export default function PoolDetailPage() {
 
               {/* Wallet Balance */}
               {isConnected && (
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4">Your Wallet</h2>
-                  <div className="p-4 bg-gray-50 rounded-xl">
-                    <p className="text-sm text-gray-500 mb-1">USDC Balance</p>
-                    <p className="text-2xl font-bold text-gray-900">{usdcBalance.toFixed(2)} USDC</p>
+                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
+                  <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Your Wallet</h2>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">USDC Balance</p>
+                    <p className="protocol-font text-2xl font-black text-slate-950">{usdcBalance.toFixed(2)} USDC</p>
                   </div>
                 </div>
               )}
 
               {/* Connect Wallet CTA */}
               {!isConnected && (
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4">Get Started</h2>
-                  <p className="text-gray-500 mb-4">Connect your wallet to join this pool or view your status</p>
+                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 text-center shadow-[6px_6px_0_#06111f]">
+                  <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Get Started</h2>
+                  <p className="mb-4 font-semibold text-slate-500">Connect your wallet to join this pool or view your status</p>
                   <ConnectWallet variant="header" scrolled={true} />
                 </div>
               )}
@@ -444,9 +443,9 @@ export default function PoolDetailPage() {
       {showJoinModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowJoinModal(false)} />
-          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
+          <div className="relative w-full max-w-md rounded-[1.75rem] border-2 border-slate-950 bg-white p-6 shadow-[8px_8px_0_#06111f]">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Join {poolName}</h3>
+              <h3 className="text-2xl font-black tracking-[-0.04em] text-slate-950">Join {poolName}</h3>
               <button onClick={() => setShowJoinModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -455,15 +454,15 @@ export default function PoolDetailPage() {
             </div>
 
             <div className="space-y-4 mb-6">
-              <div className="p-4 bg-gray-50 rounded-xl">
-                <p className="text-sm text-gray-500 mb-1">Monthly Deposit</p>
-                <p className="text-2xl font-bold text-gray-900">{depositAmount} USDC</p>
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
+                <p className="protocol-font mb-1 text-xs font-black text-slate-500">Monthly Deposit</p>
+                <p className="protocol-font text-2xl font-black text-slate-950">{depositAmount} USDC</p>
               </div>
 
-              <div className="p-4 bg-blue-50 rounded-xl">
-                <p className="text-sm text-blue-600 mb-1">Required Collateral (125%)</p>
-                <p className="text-2xl font-bold text-blue-700">{requiredCollateral?.toFixed(0) || 0} USDC</p>
-                <p className="text-xs text-blue-500 mt-1">Returned at the end of the cycle with yield bonus when available</p>
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4">
+                <p className="protocol-font mb-1 text-xs font-black text-slate-500">Required Collateral</p>
+                <p className="protocol-font text-2xl font-black text-slate-950">{requiredCollateral?.toFixed(0) || 0} USDC</p>
+                <p className="mt-1 text-xs font-semibold text-slate-500">Returned at the end of the cycle with yield bonus when available</p>
               </div>
 
               {!hasEnoughBalance && (
@@ -491,10 +490,10 @@ export default function PoolDetailPage() {
                 <button
                   onClick={() => handleApprove(requiredCollateral || 0)}
                   disabled={!hasEnoughBalance || approving || confirmingApprove}
-                  className={`w-full py-3 rounded-xl font-semibold transition-all ${
+                  className={`protocol-font w-full rounded-xl border-2 border-slate-950 py-3 font-black transition-all ${
                     !hasEnoughBalance || approving || confirmingApprove
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-green-500 to-blue-500 text-white hover:shadow-lg"
+                      ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                      : "bg-sky-400 text-slate-950 shadow-[4px_4px_0_#06111f] hover:-translate-y-0.5"
                   }`}
                 >
                   {approving || confirmingApprove ? (
@@ -510,10 +509,10 @@ export default function PoolDetailPage() {
                 <button
                   onClick={handleJoinPool}
                   disabled={joining || confirmingJoin}
-                  className={`w-full py-3 rounded-xl font-semibold transition-all ${
+                  className={`protocol-font w-full rounded-xl border-2 border-slate-950 py-3 font-black transition-all ${
                     joining || confirmingJoin
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-green-500 to-blue-500 text-white hover:shadow-lg"
+                      ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                      : "bg-sky-400 text-slate-950 shadow-[4px_4px_0_#06111f] hover:-translate-y-0.5"
                   }`}
                 >
                   {joining || confirmingJoin ? (
@@ -535,9 +534,9 @@ export default function PoolDetailPage() {
       {showDepositModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowDepositModal(false)} />
-          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md p-6">
+          <div className="relative w-full max-w-md rounded-[1.75rem] border-2 border-slate-950 bg-white p-6 shadow-[8px_8px_0_#06111f]">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">Make Monthly Deposit</h3>
+              <h3 className="text-2xl font-black tracking-[-0.04em] text-slate-950">Make Monthly Deposit</h3>
               <button onClick={() => setShowDepositModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -546,14 +545,14 @@ export default function PoolDetailPage() {
             </div>
 
             <div className="space-y-4 mb-6">
-              <div className="p-4 bg-gray-50 rounded-xl">
-                <p className="text-sm text-gray-500 mb-1">Deposit Amount</p>
-                <p className="text-2xl font-bold text-gray-900">{depositAmount} USDC</p>
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
+                <p className="protocol-font mb-1 text-xs font-black text-slate-500">Deposit Amount</p>
+                <p className="protocol-font text-2xl font-black text-slate-950">{depositAmount} USDC</p>
               </div>
 
-              <div className="p-4 bg-blue-50 rounded-xl">
-                <p className="text-sm text-blue-600 mb-1">Current Cycle</p>
-                <p className="text-2xl font-bold text-blue-700">{currentCycle} of {maxParticipants}</p>
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4">
+                <p className="protocol-font mb-1 text-xs font-black text-slate-500">Current Cycle</p>
+                <p className="protocol-font text-2xl font-black text-slate-950">{currentCycle} of {maxParticipants}</p>
               </div>
 
               {!hasEnoughForDeposit && (
@@ -579,10 +578,10 @@ export default function PoolDetailPage() {
                 <button
                   onClick={() => handleApprove(depositAmount)}
                   disabled={!hasEnoughForDeposit || approving || confirmingApprove}
-                  className={`w-full py-3 rounded-xl font-semibold transition-all ${
+                  className={`protocol-font w-full rounded-xl border-2 border-slate-950 py-3 font-black transition-all ${
                     !hasEnoughForDeposit || approving || confirmingApprove
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-green-500 to-blue-500 text-white hover:shadow-lg"
+                      ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                      : "bg-sky-400 text-slate-950 shadow-[4px_4px_0_#06111f] hover:-translate-y-0.5"
                   }`}
                 >
                   {approving || confirmingApprove ? (
@@ -598,10 +597,10 @@ export default function PoolDetailPage() {
                 <button
                   onClick={handleMakeDeposit}
                   disabled={depositing || confirmingDeposit}
-                  className={`w-full py-3 rounded-xl font-semibold transition-all ${
+                  className={`protocol-font w-full rounded-xl border-2 border-slate-950 py-3 font-black transition-all ${
                     depositing || confirmingDeposit
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-green-500 to-blue-500 text-white hover:shadow-lg"
+                      ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                      : "bg-sky-400 text-slate-950 shadow-[4px_4px_0_#06111f] hover:-translate-y-0.5"
                   }`}
                 >
                   {depositing || confirmingDeposit ? (
