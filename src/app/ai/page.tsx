@@ -1,86 +1,190 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { useLanguage } from "@/context/LanguageContext";
 import Link from "next/link";
-import { fetchProtocolYields, generateYieldRecommendation } from "@/lib/ai-optimizer";
+import { useGsapEntrance } from "@/hooks/useGsapEntrance";
 
-export const dynamic = "force-dynamic";
+interface ProtocolYield {
+  name: string;
+  apy: number;
+  tvl: number;
+  riskScore: number;
+  chain: string;
+  source: string;
+}
 
-export default async function YieldSignalsPage() {
-  const [protocols, recommendation] = await Promise.all([
-    fetchProtocolYields(),
-    generateYieldRecommendation("moderate"),
-  ]);
+interface YieldData {
+  protocols: ProtocolYield[];
+  market: {
+    volatilityIndex: number;
+    trendDirection: string;
+    suiRefGasPrice: number;
+  };
+  stats: {
+    avgApy: number;
+    maxApy: number;
+    minApy: number;
+    totalTvl: number;
+    protocolCount: number;
+  };
+}
 
-  const avgApy = protocols.reduce((sum, protocol) => sum + protocol.apy, 0) / Math.max(protocols.length, 1);
-  const totalTvl = protocols.reduce((sum, protocol) => sum + protocol.tvl, 0);
+export default function YieldSignalsPage() {
+  const [data, setData] = useState<YieldData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const gsapRef = useGsapEntrance([data]);
+  const { t } = useLanguage();
+
+  useEffect(() => {
+    fetch("/api/yields")
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.success) setData(res.data);
+        else setError(res.error);
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const getRiskColor = (score: number) => {
+    if (score <= 3) return "bg-[#d9f8df] text-green-700";
+    if (score <= 5) return "bg-[#fff1c7] text-yellow-700";
+    return "bg-[#ffe0d8] text-red-700";
+  };
+
+  const getTrendIcon = (trend: string) => {
+    switch (trend) {
+      case "bullish": return "↑";
+      case "bearish": return "↓";
+      default: return "→";
+    }
+  };
 
   return (
     <main className="min-h-screen bg-[#fbf7ed] text-slate-950">
       <Header />
-      <section className="px-5 pb-20 pt-32 md:px-10 lg:px-12">
+      <section ref={gsapRef} className="px-5 pb-20 pt-32 md:px-10 lg:px-12">
         <div className="mx-auto max-w-6xl">
-          <div className="rounded-[2rem] border-2 border-slate-950 bg-white p-8 shadow-[8px_8px_0_#06111f] md:p-12">
-            <p className="protocol-font mb-5 inline-flex rounded-full border-2 border-slate-950 bg-[#dff8ff] px-4 py-2 text-xs font-black uppercase tracking-[0.22em]">
-              live_sui_yield
-            </p>
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.06em] md:text-7xl">
-              Sui yield signals for idle ROSCA capital.
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg font-semibold leading-8 text-slate-600">
-              Suivan reads Sui yield pool data from DeFiLlama and turns it into simple risk-adjusted signals
-              for future idle-fund routing.
-            </p>
-
-            <div className="mt-10 grid gap-4 md:grid-cols-3">
-              {[
-                ["AVG APY", `${avgApy.toFixed(2)}%`, "bg-[#dff8ff]"],
-                ["TOTAL TVL", `$${(totalTvl / 1_000_000).toFixed(1)}M`, "bg-[#fff1c7]"],
-                ["BEST SIGNAL", recommendation.recommendedProtocol, "bg-[#d9f8df]"],
-              ].map(([title, value, bg]) => (
-                <div className={`rounded-[1.5rem] border-2 border-slate-950 p-5 shadow-[5px_5px_0_#06111f] ${bg}`} key={title}>
-                  <p className="protocol-font text-xs font-black uppercase text-slate-500">{title}</p>
-                  <p className="protocol-font mt-8 text-3xl font-black text-slate-950">{value}</p>
-                </div>
-              ))}
-            </div>
+          <div className="gsap-up mb-5 inline-flex rounded-full border-2 border-slate-950 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.22em] shadow-[4px_4px_0_#06111f]">
+            {t("ai.badge")}
           </div>
+          <h1 className="gsap-up max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.06em] md:text-7xl">
+            {t("ai.title")}
+          </h1>
+          <p className="gsap-up mt-6 max-w-2xl text-lg font-semibold leading-8 text-slate-600">
+            {t("ai.subtitle")}
+          </p>
 
-          <div className="mt-8 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
-            <div className="overflow-hidden rounded-[1.5rem] border-2 border-slate-950 bg-white shadow-[6px_6px_0_#06111f]">
-              {protocols.map((protocol) => (
-                <div className="grid gap-3 border-b-2 border-slate-950 p-5 last:border-b-0 md:grid-cols-[1fr_auto_auto]" key={protocol.address}>
-                  <div>
-                    <p className="font-black text-slate-950">{protocol.name}</p>
-                    <p className="protocol-font mt-1 text-xs font-black uppercase tracking-[0.12em] text-slate-400">
-                      {protocol.pool || "Sui pool"} . {protocol.source}
-                    </p>
-                  </div>
-                  <p className="protocol-font text-xl font-black text-teal-700">{protocol.apy.toFixed(2)}% APY</p>
-                  <p className="protocol-font text-sm font-black text-slate-500">${(protocol.tvl / 1_000_000).toFixed(1)}M TVL</p>
-                </div>
-              ))}
+          {loading && (
+            <div className="mt-10 flex items-center justify-center py-16">
+              <div className="h-12 w-12 animate-spin rounded-full border-2 border-slate-950 border-b-sky-400" />
+              <span className="protocol-font ml-4 text-sm font-black text-slate-500">{t("ai.loading")}</span>
             </div>
+          )}
 
-            <div className="rounded-[1.5rem] border-2 border-slate-950 bg-slate-950 p-6 text-white shadow-[6px_6px_0_#14b8a6]">
-              <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-sky-300">routing_recommendation</p>
-              <h2 className="mt-3 text-3xl font-black tracking-[-0.04em]">{recommendation.expectedApy.toFixed(2)}% blended APY</h2>
-              <div className="mt-6 space-y-3">
-                {recommendation.allocation.map((item) => (
-                  <div className="rounded-2xl border-2 border-white/40 bg-white/10 p-4" key={item.protocol}>
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="font-black">{item.protocol}</span>
-                      <span className="protocol-font text-sm font-black text-sky-300">{item.percentage}%</span>
+          {error && (
+            <div className="mt-10 rounded-[1.5rem] border-2 border-slate-950 bg-[#ffe0d8] p-5 shadow-[5px_5px_0_#06111f]">
+              <p className="protocol-font text-xs font-black text-red-700">{t("ai.errorTitle")}</p>
+              <p className="mt-2 font-semibold text-slate-700">{error}</p>
+            </div>
+          )}
+
+          {data && (
+            <>
+              <div className="gsap-up mt-10 grid grid-cols-2 gap-3 md:grid-cols-4">
+                <div className="rounded-2xl border-2 border-slate-950 bg-white p-4 shadow-[4px_4px_0_#06111f]">
+                  <p className="protocol-font text-xs font-black text-slate-400">{t("ai.avgApy")}</p>
+                  <p className="protocol-font mt-2 text-3xl font-black text-slate-950">{data.stats.avgApy.toFixed(2)}%</p>
+                </div>
+                <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-4 shadow-[4px_4px_0_#06111f]">
+                  <p className="protocol-font text-xs font-black text-slate-500">{t("ai.maxApy")}</p>
+                  <p className="protocol-font mt-2 text-3xl font-black text-slate-950">{data.stats.maxApy.toFixed(2)}%</p>
+                </div>
+                <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4 shadow-[4px_4px_0_#06111f]">
+                  <p className="protocol-font text-xs font-black text-slate-500">{t("ai.protocols")}</p>
+                  <p className="protocol-font mt-2 text-3xl font-black text-slate-950">{data.stats.protocolCount}</p>
+                </div>
+                <div className="rounded-2xl border-2 border-slate-950 bg-[#fff1c7] p-4 shadow-[4px_4px_0_#06111f]">
+                  <p className="protocol-font text-xs font-black text-slate-500">{t("ai.totalTvl")}</p>
+                  <p className="protocol-font mt-2 text-3xl font-black text-slate-950">${(data.stats.totalTvl / 1e6).toFixed(1)}M</p>
+                </div>
+              </div>
+
+              <div className="gsap-up mt-8 rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-2xl font-black tracking-[-0.04em]">{t("ai.protocolYields")}</h2>
+                  <span className="protocol-font text-xs font-black text-slate-400">
+                    {t("ai.trend")}: {getTrendIcon(data.market.trendDirection)} {data.market.trendDirection}
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {data.protocols.map((p) => (
+                    <div key={p.name} className="flex items-center justify-between rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4 transition hover:-translate-y-0.5">
+                      <div className="flex items-center gap-3">
+                        <div>
+                          <p className="protocol-font text-sm font-black text-slate-950">{p.name}</p>
+                          <p className="protocol-font text-xs font-black text-slate-400">{p.chain}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="protocol-font text-lg font-black text-slate-950">{p.apy.toFixed(2)}%</p>
+                          <p className="protocol-font text-xs font-black text-slate-400">${(p.tvl / 1e6).toFixed(1)}M TVL</p>
+                        </div>
+                        <span className={`protocol-font rounded-full border-2 border-slate-950 px-3 py-1 text-xs font-black ${getRiskColor(p.riskScore)}`}>
+                          L{p.riskScore}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="gsap-up mt-8 grid gap-4 md:grid-cols-2">
+                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-[#dff8ff] p-5 shadow-[5px_5px_0_#06111f]">
+                  <p className="protocol-font text-xs font-black uppercase text-sky-700">{t("ai.marketConditions")}</p>
+                  <div className="mt-4 space-y-3">
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-slate-600">{t("ai.volatilityIndex")}</span>
+                      <span className="protocol-font font-black">{data.market.volatilityIndex}/100</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-slate-600">{t("ai.gasPrice")}</span>
+                      <span className="protocol-font font-black">{data.market.suiRefGasPrice} MIST</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-semibold text-slate-600">{t("ai.direction")}</span>
+                      <span className="protocol-font font-black">{data.market.trendDirection}</span>
                     </div>
                   </div>
-                ))}
+                </div>
+                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-[#d9f8df] p-5 shadow-[5px_5px_0_#06111f]">
+                  <p className="protocol-font text-xs font-black uppercase text-teal-700">{t("ai.yieldRecommendation")}</p>
+                  <p className="mt-4 text-lg font-black text-slate-950">
+                    {t("ai.topProtocol")}: {data.protocols[0]?.name || "N/A"} — {data.protocols[0]?.apy.toFixed(2) || "0"}%
+                  </p>
+                  <Link
+                    href="/api/yields/recommend"
+                    className="protocol-font mt-4 inline-flex rounded-full border-2 border-slate-950 bg-sky-400 px-4 py-2 text-xs font-black text-slate-950 shadow-[3px_3px_0_#06111f] transition hover:-translate-y-0.5"
+                  >
+                    {t("ai.generateStrategy")}
+                  </Link>
+                </div>
               </div>
-              <Link
-                className="protocol-font mt-6 inline-flex rounded-full border-2 border-white bg-sky-400 px-6 py-3 text-sm font-black text-slate-950 transition hover:bg-white"
-                href="/pools"
-              >
-                Explore Pools
-              </Link>
-            </div>
+            </>
+          )}
+
+          <div className="mt-10">
+            <Link
+              className="protocol-font inline-flex rounded-full border-2 border-slate-950 bg-sky-400 px-6 py-3 text-sm font-black text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5"
+              href="/pools"
+            >
+              {t("ai.explorePools")}
+            </Link>
           </div>
         </div>
       </section>

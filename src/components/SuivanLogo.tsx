@@ -7,17 +7,17 @@ interface SuivanLogoProps {
 }
 
 export default function SuivanLogo({
-  size = 64,
+  size = 40,
   className = "",
   priority = false,
 }: SuivanLogoProps) {
   return (
     <Image
       alt="Suivan"
-      className={`object-contain ${className}`}
+      className={`object-cover ${className}`}
       height={size}
       priority={priority}
-      src="/suivan-logo.png"
+      src="/suivan-logo.jpeg"
       width={size}
     />
   );

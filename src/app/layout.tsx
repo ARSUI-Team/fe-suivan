@@ -31,13 +31,23 @@ export const metadata: Metadata = {
   description: "A Sui-native frontend for global ROSCA communities, rotating savings cycles, pool state, APY signals, and transparent member progress.",
   keywords: ["Suivan", "ROSCA", "Arisan", "Sui", "community finance", "rotating savings"],
   icons: {
-    icon: [
-      { url: "/suivan-logo.png", type: "image/png" },
-    ],
-    apple: [
-      { url: "/suivan-logo.png" },
-    ],
-    shortcut: ["/suivan-logo.png"],
+    icon: [{ url: "/suivan-logo.jpeg", type: "image/jpeg" }],
+    apple: [{ url: "/suivan-logo.jpeg" }],
+    shortcut: ["/suivan-logo.jpeg"],
+  },
+  openGraph: {
+    title: "Suivan - Community Wealth Protocol on Sui",
+    description: "Global ROSCA pools with Sui-native settlement, zkLogin onboarding, and AI-optimized yield signals.",
+    url: "https://suivan.vercel.app",
+    siteName: "Suivan",
+    type: "website",
+    images: [{ url: "/suivan-logo.jpeg", width: 772, height: 717, alt: "Suivan" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Suivan - Community Wealth Protocol on Sui",
+    description: "Global ROSCA pools with Sui-native settlement, zkLogin onboarding, and AI-optimized yield signals.",
+    images: ["/suivan-logo.jpeg"],
   },
 };
 
@@ -49,9 +59,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/suivan-logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/suivan-logo.png" />
-        <link rel="shortcut icon" href="/suivan-logo.png" />
+        <link rel="icon" href="/suivan-logo.jpeg" type="image/jpeg" />
+        <link rel="apple-touch-icon" href="/suivan-logo.jpeg" />
+        <link rel="shortcut icon" href="/suivan-logo.jpeg" />
       </head>
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${jetBrainsMono.variable} antialiased`}

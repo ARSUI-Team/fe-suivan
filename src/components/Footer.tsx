@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import SuivanLogo from "./SuivanLogo";
+import { useLanguage } from "@/context/LanguageContext";
 
 const links = [
   { label: "ROSCA", href: "/#rosca" },
@@ -14,13 +18,14 @@ const communityLinks = [
 ];
 
 export default function Footer() {
+  const { t } = useLanguage();
   return (
     <footer className="border-t-2 border-slate-950 bg-slate-950 px-5 py-14 text-white md:px-10 lg:px-12">
       <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[1.1fr_0.9fr]">
         <div>
           <div className="mb-5 flex items-center gap-3">
-            <span className="grid size-14 place-items-center overflow-hidden rounded-full border border-white/20 bg-white">
-              <SuivanLogo className="size-14 scale-[1.28]" size={72} />
+            <span className="grid size-11 place-items-center overflow-hidden rounded-full bg-slate-900 ring-1 ring-white/10">
+              <SuivanLogo className="size-11" size={44} />
             </span>
             <div>
               <h3 className="text-2xl font-black">Suivan</h3>
@@ -28,8 +33,7 @@ export default function Footer() {
             </div>
           </div>
           <p className="max-w-xl font-medium leading-7 text-slate-300">
-            A global ROSCA frontend for Sui-native cycles, pool state, yield
-            signals, and community trust.
+            {t("footer.tagline")}
           </p>
         </div>
 
@@ -64,19 +68,11 @@ export default function Footer() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            Built for Sui
-            <ArrowIcon />
+            {t("footer.builtFor")}
+            <ArrowUpRight className="size-4" />
           </a>
         </div>
       </div>
     </footer>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M7 17 17 7M9 7h8v8" />
-    </svg>
   );
 }

@@ -4,8 +4,10 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { useLanguage } from "@/context/LanguageContext";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
+import { ArrowUpRight } from "lucide-react";
 import SuivanLogo from "./SuivanLogo";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -56,6 +58,7 @@ const pools = [
 
 export default function SuivanLanding() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
@@ -136,22 +139,18 @@ export default function SuivanLanding() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.02fr_0.98fr]">
           <div>
             <div className="suivan-pop mb-5 inline-flex items-center gap-2 rounded-full border-2 border-slate-950 bg-white px-4 py-2 shadow-[4px_4px_0_#06111f]">
-              <span className="grid size-7 place-items-center overflow-hidden rounded-full">
-                <SuivanLogo className="size-7 scale-[1.28]" size={36} />
-              </span>
+              <SuivanLogo className="size-5" size={20} />
               <span className="protocol-font text-xs font-black uppercase tracking-[0.18em]">
-                Sui community wealth
+                {t("landing.badge")}
               </span>
             </div>
 
             <h1 className="suivan-pop max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.06em] md:text-7xl lg:text-8xl">
-              Simple ROSCA pools for global communities.
+              {t("landing.title")}
             </h1>
 
             <p className="suivan-pop mt-6 max-w-2xl text-lg font-semibold leading-8 text-slate-600">
-              Suivan explains Arisan as a local form of ROSCA, then turns it into a
-              clean Sui-native interface for joining pools, tracking cycles, seeing
-              member progress, and reading APY signals.
+              {t("landing.subtitle")}
             </p>
 
             <div className="suivan-pop mt-8 flex flex-wrap gap-3">
@@ -159,14 +158,14 @@ export default function SuivanLanding() {
                 className="inline-flex h-12 items-center gap-2 rounded-full border-2 border-slate-950 bg-sky-400 px-6 text-sm font-black text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5"
                 href="/pools"
               >
-                Explore Pools
-                <ArrowIcon />
+                {t("landing.explore")}
+                <ArrowUpRight className="size-4" />
               </Link>
               <a
                 className="inline-flex h-12 items-center rounded-full border-2 border-slate-950 bg-white px-6 text-sm font-black text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5"
                 href="#how"
               >
-                How ROSCA Works
+                {t("landing.how")}
               </a>
             </div>
           </div>
@@ -203,7 +202,7 @@ export default function SuivanLanding() {
         <div className="suivan-pop mx-auto mt-12 grid max-w-6xl grid-cols-2 gap-3 md:grid-cols-4">
           {statusStats.map(([label, value]) => (
             <div className="rounded-2xl border-2 border-slate-950 bg-white p-4 shadow-[4px_4px_0_#06111f]" key={label}>
-              <p className="protocol-font text-xs font-black text-slate-400">{label}</p>
+              <p className="protocol-font text-xs font-black text-slate-400">{t(label === "POOLS" ? "landing.statPools" : label === "MEMBERS" ? "landing.statMembers" : label === "VOLUME" ? "landing.statVolume" : "landing.statApy")}</p>
               <p className="protocol-font mt-2 text-3xl font-black">{value}</p>
             </div>
           ))}
@@ -218,11 +217,11 @@ export default function SuivanLanding() {
                 cycle_state
               </p>
               <h2 className="mt-3 max-w-3xl text-4xl font-black leading-none tracking-[-0.05em] md:text-6xl">
-                Keep the product readable in four states.
+                {t("landing.sectionTitle")}
               </h2>
             </div>
             <p className="max-w-sm text-base font-semibold leading-7 text-slate-600">
-              The UI should feel like a friendly protocol dashboard, not a crowded DeFi terminal.
+              {t("landing.sectionSub")}
             </p>
           </div>
 
@@ -233,8 +232,8 @@ export default function SuivanLanding() {
                   <Icon />
                   <span className="protocol-font text-sm font-black">{code}</span>
                 </div>
-                <h3 className="text-3xl font-black tracking-[-0.04em]">{title}</h3>
-                <p className="mt-4 text-sm font-semibold leading-6 text-slate-600">{copy}</p>
+                <h3 className="text-3xl font-black tracking-[-0.04em]">{t(title === "Join" ? "landing.step1Title" : title === "Contribute" ? "landing.step2Title" : title === "Rotate" ? "landing.step3Title" : "landing.step4Title")}</h3>
+                <p className="mt-4 text-sm font-semibold leading-6 text-slate-600">{t(title === "Join" ? "landing.step1Copy" : title === "Contribute" ? "landing.step2Copy" : title === "Rotate" ? "landing.step3Copy" : "landing.step4Copy")}</p>
               </article>
             ))}
           </div>
@@ -245,14 +244,13 @@ export default function SuivanLanding() {
         <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.85fr_1.15fr]">
           <div className="suivan-reveal">
             <p className="protocol-font text-xs font-black uppercase tracking-[0.22em] text-sky-300">
-              walrus_inspired
+              {t("landing.walrusBadge")}
             </p>
             <h2 className="mt-3 text-4xl font-black leading-none tracking-[-0.05em] md:text-6xl">
-              Treat every pool like an inspectable Sui object.
+              {t("landing.walrusTitle")}
             </h2>
             <p className="mt-5 text-base font-semibold leading-7 text-slate-300">
-              Walrus keeps a complex protocol understandable through clear resources,
-              objects, epochs, and availability. Suivan should do the same for ROSCA cycles.
+              {t("landing.walrusDesc")}
             </p>
           </div>
 
@@ -283,15 +281,13 @@ export default function SuivanLanding() {
           <TrustIcon />
           <div>
             <p className="protocol-font text-xs font-black uppercase tracking-[0.22em] text-teal-700">
-              trust_layer
+              {t("landing.trustBadge")}
             </p>
             <h2 className="mt-3 text-4xl font-black leading-none tracking-[-0.05em] md:text-6xl">
-              Less noise. More confidence.
+              {t("landing.trustTitle")}
             </h2>
             <p className="mt-5 text-lg font-semibold leading-8 text-slate-600">
-              Suivan should explain what matters before a user connects a wallet:
-              contribution schedule, participant state, payout progress, collateral direction,
-              and yield assumptions. Everything else can wait until the integration is real.
+              {t("landing.trustDesc")}
             </p>
           </div>
         </div>
@@ -307,14 +303,6 @@ function HandIcon() {
       <path d="M27 58l-10 3 7 18 12-5" fill="#61d7ff" stroke="#06111f" strokeWidth="4" strokeLinejoin="round" />
       <path d="M47 47l8-19 10 4-7 19" fill="#fff1c7" stroke="#06111f" strokeWidth="4" strokeLinejoin="round" />
       <path d="M39 52h20" stroke="#06111f" strokeWidth="4" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M7 17 17 7M9 7h8v8" />
     </svg>
   );
 }
