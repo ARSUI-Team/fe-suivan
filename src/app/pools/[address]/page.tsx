@@ -1,133 +1,169 @@
 "use client";
 
-import { useCurrentAccount, useCurrentWallet } from "@mysten/dapp-kit";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import ConnectWallet from "@/components/ConnectWallet";
-import { SuccessCelebration } from "@/components/Confetti";
-import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import PoolAnalyticsChart from "@/components/PoolAnalyticsChart";
+import Footer from "@/components/Footer";
 import SharePool from "@/components/SharePool";
 import SuiFeeProfile from "@/components/SuiFeeProfile";
+import PoolAnalyticsChart from "@/components/PoolAnalyticsChart";
+import { SuccessCelebration } from "@/components/Confetti";
+import { useCurrentAccount } from "@mysten/dapp-kit";
+import ConnectSuiWallet from "@/components/ConnectSuiWallet";
+import { useLanguage } from "@/context/LanguageContext";
+import { useSuccessToast, useErrorToast } from "@/components/Toast";
 import {
-  useCurrentYield,
-  useHasDepositedThisCycle,
-  useJoinPool,
-  useLastWinner,
-  useMakeDeposit,
+  usePoolInfo,
   useParticipantInfo,
   useParticipantList,
-  usePoolInfo,
-  useRequiredCollateral,
+  useJoinPool,
+  useMakeDeposit,
+  useCurrentYield,
   useUSDCBalance,
-} from "@/hooks/useContracts";
+  useUserUSDCcoins,
+} from "@/hooks/useSuiContracts";
 
 export default function PoolDetailPage() {
   const params = useParams();
   const poolAddress = params.address as string;
   const account = useCurrentAccount();
-  const { isConnected } = useCurrentWallet();
-  const address = account?.address;
+  const isConnected = !!account;
+  const address = account?.address || "";
+
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showSuccessCelebration, setShowSuccessCelebration] = useState(false);
   const [successMessage, setSuccessMessage] = useState({ title: "", message: "" });
+  const [joinCoinId, setJoinCoinId] = useState("");
+  const [depositCoinId, setDepositCoinId] = useState("");
+  const { t } = useLanguage();
 
+  // Fetch pool data
   const { poolInfo, isLoading: poolLoading, refetch: refetchPool } = usePoolInfo(poolAddress);
   const { participantAddresses, participantCount, isLoading: participantsLoading } = useParticipantList(poolAddress);
-  const { collateral: requiredCollateral } = useRequiredCollateral(poolAddress);
-  const { currentYield, refetch: refetchYield } = useCurrentYield(poolAddress);
-  const { lastWinner } = useLastWinner(poolAddress);
+
+  // User-specific data
   const { participantInfo, refetch: refetchParticipant } = useParticipantInfo(poolAddress, address);
-  const { balance: usdcBalance, refetch: refetchBalance } = useUSDCBalance(address);
-  const { hasDeposited, refetch: refetchHasDeposited } = useHasDepositedThisCycle(poolAddress, address);
-  const { joinPool, isPending: joining, isConfirming: confirmingJoin, isSuccess: joinSuccess } = useJoinPool();
-  const { makeDeposit, isPending: depositing, isConfirming: confirmingDeposit, isSuccess: depositSuccess } = useMakeDeposit();
 
-  const pool = useMemo(() => {
-    if (!poolInfo) return null;
-    const status: "open" | "active" | "completed" = poolInfo.started
-      ? poolInfo.active
-        ? "active"
-        : "completed"
-      : "open";
+  // Live data
+  const { currentYield } = useCurrentYield(poolAddress);
+  const { balance: usdcBalance } = useUSDCBalance(address);
+  const { coins: usdcCoins } = useUserUSDCcoins(address);
+  const defaultCoinId = usdcCoins.length > 0 ? usdcCoins[0].coinObjectId : "";
 
-    return {
-      name:
-        poolInfo.depositAmount === 25
-          ? "Jakarta Builders Pool"
-          : poolInfo.depositAmount === 50
-            ? "Global Remit Circle"
-            : poolInfo.depositAmount === 100
-              ? "Creator Savings Guild"
-              : "Community Pool",
-      status,
-      depositAmount: poolInfo.depositAmount,
-      maxParticipants: poolInfo.maxParticipants,
-      currentParticipants: poolInfo.currentParticipants,
-      totalFunds: poolInfo.totalFunds,
-      currentCycle: poolInfo.cycle,
-    };
-  }, [poolInfo]);
+  // Live APY from contract
+  const liveApy = poolInfo && poolInfo.totalFunds > 0
+    ? Math.round(((currentYield / poolInfo.totalFunds) * 100 * 12) * 10) / 10
+    : 8.5;
 
+  // Actions
+  const { joinPool, isPending: joining, isSuccess: joinSuccess, error: joinError } = useJoinPool();
+  const { makeDeposit, isPending: depositing, isSuccess: depositSuccess, error: depositError } = useMakeDeposit();
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
+
+  // Format pool info
+  const depositAmount = poolInfo?.depositAmount || 0;
+  const maxParticipants = poolInfo?.maxParticipants || 0;
+  const currentParticipants = poolInfo?.currentParticipants || 0;
+  const totalFunds = poolInfo?.totalFunds || 0;
+  const currentCycle = poolInfo?.cycle || 0;
+  const isStarted = poolInfo?.started || false;
+  const isActive = poolInfo?.active || false;
+
+  // Determine pool status
+  let status: "open" | "active" | "completed" = "open";
+  if (isStarted && isActive) status = "active";
+  else if (isStarted && !isActive) status = "completed";
+
+  // Pool name based on deposit
+  let poolName = "Custom Pool";
+  if (depositAmount === 10) poolName = "Small Pool";
+  else if (depositAmount === 50) poolName = "Medium Pool";
+  else if (depositAmount === 100) poolName = "Large Pool";
+
+  // User is participant
   const isParticipant = participantInfo?.isActive || false;
-  const hasEnoughBalance = requiredCollateral ? usdcBalance >= requiredCollateral : true;
-  const hasEnoughForDeposit = pool ? usdcBalance >= pool.depositAmount : true;
 
+  // Handle join success
   useEffect(() => {
-    if (!joinSuccess) return;
-    const timer = window.setTimeout(() => {
+    if (joinSuccess) {
       setShowJoinModal(false);
-      setSuccessMessage({
-        title: "Joined on Sui",
-        message: "Your one-click ROSCA join flow completed. Sponsored transaction support is wired for the Suivan relayer.",
-      });
+      setSuccessMessage({ title: "Successfully Joined", message: "Welcome to the ROSCA pool. Your collateral and cycle status are now tracked." });
       setShowSuccessCelebration(true);
       refetchPool();
       refetchParticipant();
-      refetchBalance();
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [joinSuccess, refetchBalance, refetchParticipant, refetchPool]);
+      successToast("Joined Pool", "You are now a participant in this ROSCA.");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [joinSuccess]);
+
+  // Handle deposit success
+  useEffect(() => {
+    if (depositSuccess) {
+      setShowDepositModal(false);
+      setSuccessMessage({ title: "Deposit Complete", message: "Your cycle contribution has been submitted successfully." });
+      setShowSuccessCelebration(true);
+      refetchPool();
+      refetchParticipant();
+      successToast("Deposit Complete", "Your contribution has been submitted on-chain.");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [depositSuccess]);
+
+  // Handle join error
+  useEffect(() => {
+    if (joinError) errorToast("Join Failed", joinError?.message || "Transaction failed");
+  }, [joinError, errorToast]);
+
+  // Handle deposit error
+  useEffect(() => {
+    if (depositError) errorToast("Deposit Failed", depositError?.message || "Transaction failed");
+  }, [depositError, errorToast]);
+
+  // Auto-populate coin ID when modals open
+  useEffect(() => {
+    if (showJoinModal && defaultCoinId && !joinCoinId) {
+      setJoinCoinId(defaultCoinId);
+    }
+  }, [showJoinModal, defaultCoinId, joinCoinId]);
 
   useEffect(() => {
-    if (!depositSuccess) return;
-    const timer = window.setTimeout(() => {
-      setShowDepositModal(false);
-      setSuccessMessage({
-        title: "Contribution Submitted",
-        message: "Your cycle contribution was submitted through the Sui transaction flow.",
-      });
-      setShowSuccessCelebration(true);
-      refetchPool();
-      refetchParticipant();
-      refetchBalance();
-      refetchHasDeposited();
-      refetchYield();
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, [depositSuccess, refetchBalance, refetchHasDeposited, refetchParticipant, refetchPool, refetchYield]);
+    if (showDepositModal && defaultCoinId && !depositCoinId) {
+      setDepositCoinId(defaultCoinId);
+    }
+  }, [showDepositModal, defaultCoinId, depositCoinId]);
 
-  if (poolLoading || !pool) {
+  const handleJoinPool = () => {
+    joinPool(poolAddress, Math.ceil(depositAmount * (maxParticipants - 1) * 1.25), joinCoinId);
+  };
+
+  const handleMakeDeposit = () => {
+    makeDeposit(poolAddress, depositAmount, depositCoinId);
+  };
+
+  const getStatusColor = (s: string) => {
+    switch (s) {
+      case "open": return "bg-green-100 text-green-700";
+      case "active": return "bg-blue-100 text-blue-700";
+      case "completed": return "bg-gray-100 text-gray-700";
+      default: return "bg-gray-100 text-gray-700";
+    }
+  };
+
+  if (poolLoading) {
     return (
       <main className="min-h-screen bg-[#fbf7ed]">
         <Header />
         <div className="flex items-center justify-center pb-16 pt-32">
-          <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white px-6 py-5 shadow-[5px_5px_0_#06111f]">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 animate-spin rounded-full border-4 border-slate-950 border-b-sky-400" />
-              <p className="protocol-font text-sm font-black text-slate-600">Loading Sui pool object...</p>
-            </div>
-          </div>
+          <div className="h-12 w-12 animate-spin rounded-full border-2 border-slate-950 border-b-sky-400"></div>
+          <span className="protocol-font ml-4 text-sm font-black text-slate-600">Loading pool data...</span>
         </div>
         <Footer />
       </main>
     );
   }
-
-  const capacity = Math.round((pool.currentParticipants / pool.maxParticipants) * 100);
 
   return (
     <main className="min-h-screen bg-[#fbf7ed] text-slate-950">
@@ -137,37 +173,40 @@ export default function PoolDetailPage() {
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_22%_18%,rgba(94,200,255,0.32),transparent_30%),linear-gradient(180deg,#fbf7ed,#f8fbff)]" />
         <div className="mx-auto max-w-6xl">
           <Link href="/pools" className="protocol-font mb-6 inline-flex items-center rounded-full border-2 border-slate-950 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5">
-            <svg className="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            Back to Pools
+            {t("detail.back")}
           </Link>
 
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <div className="mb-4 flex flex-wrap items-center gap-3">
+              <div className="mb-4 flex items-center gap-3">
                 <h1 className="text-5xl font-black leading-[0.95] tracking-[-0.06em] text-slate-950 md:text-7xl">
-                  {pool.name}
+                  {poolName}
                 </h1>
-                <span className="protocol-font rounded-full border-2 border-slate-950 bg-[#dff8ff] px-3 py-1 text-xs font-black">
-                  {pool.status.toUpperCase()}
+                <span className={`protocol-font rounded-full border-2 border-slate-950 px-3 py-1 text-xs font-black ${getStatusColor(status)}`}>
+                  {status.charAt(0).toUpperCase() + status.slice(1)}
                 </span>
               </div>
               <div className="protocol-font inline-flex max-w-full items-center gap-1.5 overflow-hidden rounded-full border-2 border-slate-950 bg-white px-4 py-2 text-xs font-black text-slate-500 shadow-[4px_4px_0_#06111f]">
-                Sui object {poolAddress.slice(0, 10)}...{poolAddress.slice(-8)}
+                {poolAddress}
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-9 4h12M7 8h10" />
+                </svg>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
               <SharePool
                 poolAddress={poolAddress}
-                poolName={pool.name}
-                monthlyDeposit={pool.depositAmount}
-                participants={pool.currentParticipants}
-                maxParticipants={pool.maxParticipants}
-                apy={8.5}
+                poolName={poolName}
+                monthlyDeposit={depositAmount}
+                participants={currentParticipants}
+                maxParticipants={maxParticipants}
+                apy={liveApy}
               />
-              {!isConnected && <ConnectWallet variant="header" scrolled={true} />}
+              {!isConnected && <ConnectSuiWallet variant="header" scrolled={true} />}
             </div>
           </div>
         </div>
@@ -175,96 +214,103 @@ export default function PoolDetailPage() {
 
       <section className="px-5 py-8 md:px-10 lg:px-12">
         <div className="mx-auto max-w-6xl">
-          <div className="mb-6 grid gap-4 md:grid-cols-3">
-            <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[5px_5px_0_#06111f]">
-              <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-sky-700">Sponsored tx</p>
-              <h2 className="mt-2 text-xl font-black tracking-[-0.03em]">Gas covered by Suivan</h2>
-              <p className="mt-2 text-sm font-semibold leading-6 text-slate-500">
-                The action model is prepared for a relayer-backed gasless UX.
-              </p>
-            </div>
-            <div className="rounded-[1.5rem] border-2 border-slate-950 bg-[#d9f8df] p-5 shadow-[5px_5px_0_#06111f]">
-              <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-slate-500">zkLogin</p>
-              <h2 className="mt-2 text-xl font-black tracking-[-0.03em]">Social onboarding ready</h2>
-              <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
-                The UI supports wallet users now and leaves room for Google-based zkLogin.
-              </p>
-            </div>
-            <div className="rounded-[1.5rem] border-2 border-slate-950 bg-[#dff8ff] p-5 shadow-[5px_5px_0_#06111f]">
-              <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-slate-500">Sui objects</p>
-              <h2 className="mt-2 text-xl font-black tracking-[-0.03em]">Pool state is composable</h2>
-              <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
-                Pools, participants, and cycle progress map cleanly to object-centric data.
-              </p>
-            </div>
+          <div className="mb-6 rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[5px_5px_0_#06111f]">
+            <p className="protocol-font text-xs font-black uppercase tracking-[0.2em] text-sky-700">
+              Pool detail boundary
+            </p>
+            <p className="mt-2 max-w-4xl text-sm font-semibold leading-6 text-slate-500">
+              Detail data, member state, deposits, yield signals, and settlement status are
+              isolated here so the frontend can connect cleanly to Suivan&apos;s upcoming Sui API
+              and contract modules.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            <div className="space-y-6 lg:col-span-2">
+            {/* Left Column - Pool Info */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Pool Stats */}
               <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
-                <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Pool Information</h2>
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                  {[
-                    ["DEPOSIT", `${pool.depositAmount} USDC`, "bg-[#fbf7ed]"],
-                    ["MEMBERS", `${pool.currentParticipants}/${pool.maxParticipants}`, "bg-[#dff8ff]"],
-                    ["CYCLE", `${pool.currentCycle}/${pool.maxParticipants}`, "bg-[#fff1c7]"],
-                    ["FUNDS", `$${pool.totalFunds.toFixed(2)}`, "bg-[#d9f8df]"],
-                  ].map(([label, value, bg]) => (
-                    <div className={`rounded-2xl border-2 border-slate-950 p-4 ${bg}`} key={label}>
-                      <p className="protocol-font mb-1 text-xs font-black text-slate-500">{label}</p>
-                      <p className="protocol-font text-xl font-black text-slate-950">{value}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="protocol-font text-xs font-black text-slate-500">Pool Capacity</span>
-                    <span className="protocol-font text-sm font-black text-slate-950">{capacity}%</span>
-                  </div>
-                  <div className="h-3 w-full overflow-hidden rounded-full border-2 border-slate-950 bg-slate-100">
-                    <div className="h-full bg-teal-400 transition-all duration-500" style={{ width: `${capacity}%` }} />
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
-                <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                  <h2 className="text-2xl font-black tracking-[-0.04em] text-slate-950">Yield and Cycle Signals</h2>
-                  <SuiFeeProfile transactionType="join" />
-                </div>
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  <div className="rounded-2xl border-2 border-slate-950 bg-[#e8e0ff] p-4">
-                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">YIELD</p>
-                    <p className="protocol-font text-xl font-black text-slate-950">${currentYield.toFixed(2)}</p>
-                  </div>
-                  <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-4">
-                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">EST APY</p>
-                    <p className="protocol-font text-xl font-black text-slate-950">8.5%</p>
+                <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">{t("detail.poolInfo")}</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">{t("detail.deposit")}</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">{depositAmount} USDC</p>
                   </div>
                   <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4">
-                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">COMMITMENT</p>
-                    <p className="protocol-font text-xl font-black text-slate-950">{requiredCollateral?.toFixed(0) || 0} USDC</p>
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">{t("detail.members")}</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">{currentParticipants}/{maxParticipants}</p>
+                  </div>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#fff1c7] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">{t("detail.cycle")}</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">{currentCycle}/{maxParticipants}</p>
+                  </div>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">{t("detail.funds")}</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">${totalFunds.toFixed(2)}</p>
+                  </div>
+                </div>
+
+                {/* Progress Bar */}
+                <div className="mt-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="protocol-font text-xs font-black text-slate-500">{t("detail.capacity")}</span>
+                    <span className="protocol-font text-sm font-black text-slate-950">
+                      {Math.round((currentParticipants / maxParticipants) * 100)}%
+                    </span>
+                  </div>
+                  <div className="h-3 w-full overflow-hidden rounded-full border-2 border-slate-950 bg-slate-100">
+                    <div
+                      className="h-full bg-teal-400 transition-all duration-500"
+                      style={{ width: `${(currentParticipants / maxParticipants) * 100}%` }}
+                    />
                   </div>
                 </div>
               </div>
 
-              <PoolAnalyticsChart title={`${pool.name} Performance`} poolAddress={poolAddress} />
-
+              {/* Yield Info */}
               <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
-                <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Participants ({participantCount})</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-2xl font-black tracking-[-0.04em] text-slate-950">{t("detail.yieldSection")}</h2>
+                  <SuiFeeProfile transactionType="join" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#e8e0ff] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">{t("detail.yield")}</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">{currentYield.toFixed(2)} USDC</p>
+                  </div>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">{t("detail.estApy")}</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">{liveApy}%</p>
+                  </div>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">{t("detail.collateral")}</p>
+                    <p className="protocol-font text-xl font-black text-slate-950">{Math.ceil(depositAmount * (maxParticipants - 1) * 1.25)} USDC</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pool Analytics Chart */}
+              <PoolAnalyticsChart title={`${poolName} Performance`} poolAddress={poolAddress} />
+
+              {/* Participants List */}
+              <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
+                <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">
+                  {t("detail.participants", { count: participantCount })}
+                </h2>
                 {participantsLoading ? (
                   <div className="flex items-center justify-center py-8">
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-950 border-b-sky-400" />
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
                   </div>
-                ) : (
+                ) : participantAddresses.length > 0 ? (
                   <div className="space-y-3">
-                    {participantAddresses.map((participantAddress, index) => (
+                    {participantAddresses.map((addr, index) => (
                       <div
-                        className={`flex items-center justify-between rounded-xl border-2 border-slate-950 p-4 ${
-                          participantAddress.toLowerCase() === address?.toLowerCase() ? "bg-[#d9f8df]" : "bg-[#f8fbff]"
+                        key={addr}
+                        className={`flex items-center justify-between p-4 rounded-xl ${
+                          addr.toLowerCase() === address?.toLowerCase()
+                            ? "border-2 border-slate-950 bg-[#d9f8df]"
+                            : "border-2 border-slate-950 bg-[#f8fbff]"
                         }`}
-                        key={participantAddress}
                       >
                         <div className="flex items-center gap-3">
                           <div className="protocol-font flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-950 bg-sky-400 font-black text-slate-950">
@@ -272,90 +318,118 @@ export default function PoolDetailPage() {
                           </div>
                           <div>
                             <p className="protocol-font text-sm font-bold text-slate-950">
-                              {participantAddress.slice(0, 6)}...{participantAddress.slice(-4)}
+                              {addr.slice(0, 6)}...{addr.slice(-4)}
                             </p>
-                            {participantAddress.toLowerCase() === address?.toLowerCase() && (
+                            {addr.toLowerCase() === address?.toLowerCase() && (
                               <span className="protocol-font text-xs font-black text-teal-700">You</span>
                             )}
                           </div>
                         </div>
-                        {participantAddress.toLowerCase() === lastWinner?.toLowerCase() && (
-                          <span className="protocol-font rounded-full border-2 border-slate-950 bg-[#fff1c7] px-3 py-1 text-xs font-black">
-                            Last winner
-                          </span>
-                        )}
+
                       </div>
                     ))}
                   </div>
+                ) : (
+                  <p className="text-gray-500 text-center py-8">{t("detail.noParticipants")}</p>
                 )}
               </div>
             </div>
 
+            {/* Right Column - Actions */}
             <div className="space-y-6">
-              {isConnected ? (
+              {/* User Status Card */}
+              {isConnected && (
                 <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
-                  <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Your Status</h2>
+                  <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">{t("detail.yourStatus")}</h2>
+
                   {isParticipant ? (
                     <div className="space-y-4">
                       <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-4">
-                        <p className="font-black text-slate-950">Active participant</p>
-                        <p className="mt-1 text-sm font-semibold text-slate-600">Your cycle status is tracked in the pool object.</p>
+                        <div className="flex items-center gap-2 mb-2">
+                          <svg className="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span className="font-black text-slate-950">{t("detail.activeParticipant")}</span>
+                        </div>
+                        <p className="text-sm font-semibold text-slate-600">{t("detail.youAreIn")}</p>
                       </div>
+
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="protocol-font text-xs font-black text-slate-500">Commitment</span>
+                          <span className="protocol-font text-xs font-black text-slate-500">{t("detail.collateralLocked")}</span>
                           <span className="protocol-font font-black">{participantInfo?.collateralAmount.toFixed(2)} USDC</span>
                         </div>
                         <div className="flex justify-between text-sm">
-                          <span className="protocol-font text-xs font-black text-slate-500">Deposited</span>
+                          <span className="protocol-font text-xs font-black text-slate-500">{t("detail.totalDeposited")}</span>
                           <span className="protocol-font font-black">{participantInfo?.totalDeposited.toFixed(2)} USDC</span>
                         </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="protocol-font text-xs font-black text-slate-500">{t("detail.receivedPayout")}</span>
+                          <span className={`protocol-font font-black ${participantInfo?.hasReceivedPayout ? "text-teal-700" : "text-slate-600"}`}>
+                            {participantInfo?.hasReceivedPayout ? t("detail.yes") : t("detail.notYet")}
+                          </span>
+                        </div>
                       </div>
-                      {pool.status === "active" && !hasDeposited && (
+
+                      {/* Deposit Button for Active Pool */}
+                      {status === "active" && (
                         <button
                           onClick={() => setShowDepositModal(true)}
                           className="protocol-font w-full rounded-xl border-2 border-slate-950 bg-sky-400 py-3 font-black text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5"
                         >
-                          Contribute This Cycle
+                          {t("detail.makeDeposit")}
                         </button>
                       )}
-                      {pool.status === "active" && hasDeposited && (
-                        <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4 text-center">
-                          <p className="font-black text-slate-950">Contribution complete for this cycle</p>
+
+                      {/* Claim section for completed pool */}
+                      {status === "completed" && (participantInfo?.collateralAmount ?? 0) > 0 && (
+                        <div className="rounded-2xl border-2 border-slate-950 bg-[#fff1c7] p-4">
+                          <h3 className="mb-2 font-black text-slate-950">{t("detail.collateralAvailable")}</h3>
+                          <p className="mb-3 text-sm font-semibold text-slate-600">
+                            {t("detail.collateralReturned")}
+                          </p>
                         </div>
                       )}
                     </div>
                   ) : (
                     <div className="space-y-4">
                       <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
-                        <p className="font-semibold text-slate-600">You are not a participant in this pool.</p>
+                        <p className="font-semibold text-slate-600">{t("detail.notParticipant")}</p>
                       </div>
-                      {pool.status === "open" && (
+
+                      {status === "open" && (
                         <button
                           onClick={() => setShowJoinModal(true)}
                           className="protocol-font w-full rounded-xl border-2 border-slate-950 bg-sky-400 py-3 font-black text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5"
                         >
-                          Join Pool
+                          {t("detail.joinThisPool")}
                         </button>
                       )}
                     </div>
                   )}
                 </div>
-              ) : (
-                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 text-center shadow-[6px_6px_0_#06111f]">
-                  <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Get Started</h2>
-                  <p className="mb-4 font-semibold text-slate-500">Connect a Sui wallet to join with one transaction.</p>
-                  <ConnectWallet variant="header" scrolled={true} />
+              )}
+
+              {/* Wallet Balance */}
+              {isConnected && (
+                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
+                  <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">{t("detail.yourWallet")}</h2>
+                  <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
+                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">{t("detail.usdcBalance")}</p>
+                    <p className="protocol-font text-2xl font-black text-slate-950">{usdcBalance.toFixed(2)} USDC</p>
+                    {usdcCoins.length > 0 && (
+                      <p className="mt-1 text-xs font-semibold text-slate-500">{usdcCoins.length} coin{usdcCoins.length > 1 ? 's' : ''} available</p>
+                    )}
+                  </div>
                 </div>
               )}
 
-              {isConnected && (
-                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[6px_6px_0_#06111f]">
-                  <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">Your Wallet</h2>
-                  <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
-                    <p className="protocol-font mb-1 text-xs font-black text-slate-500">USDC Balance</p>
-                    <p className="protocol-font text-2xl font-black text-slate-950">{usdcBalance.toFixed(2)} USDC</p>
-                  </div>
+              {/* Connect Wallet CTA */}
+              {!isConnected && (
+                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 text-center shadow-[6px_6px_0_#06111f]">
+                  <h2 className="mb-4 text-2xl font-black tracking-[-0.04em] text-slate-950">{t("detail.getStarted")}</h2>
+                  <p className="mb-4 font-semibold text-slate-500">{t("detail.connectPrompt")}</p>
+                  <ConnectSuiWallet variant="header" scrolled={true} />
                 </div>
               )}
             </div>
@@ -363,42 +437,158 @@ export default function PoolDetailPage() {
         </div>
       </section>
 
+      {/* Join Pool Modal */}
       {showJoinModal && (
-        <ActionModal
-          title={`Join ${pool.name}`}
-          primaryLabel="Join Pool"
-          pendingLabel={joining ? "Joining..." : "Finalizing..."}
-          pending={joining || confirmingJoin}
-          disabled={!hasEnoughBalance}
-          onClose={() => setShowJoinModal(false)}
-          onSubmit={() => joinPool(poolAddress)}
-          rows={[
-            ["Cycle Deposit", `${pool.depositAmount} USDC`],
-            ["Commitment", `${requiredCollateral?.toFixed(0) || 0} USDC`],
-            ["Transaction", "Sponsored-ready Sui transaction"],
-          ]}
-          warning={!hasEnoughBalance ? `Insufficient USDC. You need ${requiredCollateral} USDC but only have ${usdcBalance.toFixed(2)} USDC.` : undefined}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowJoinModal(false)} />
+          <div className="relative w-full max-w-md rounded-[1.75rem] border-2 border-slate-950 bg-white p-6 shadow-[8px_8px_0_#06111f]">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-black tracking-[-0.04em] text-slate-950">Join {poolName}</h3>
+              <button onClick={() => setShowJoinModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
+                <p className="protocol-font mb-1 text-xs font-black text-slate-500">{t("pools.deposit")}</p>
+                <p className="protocol-font text-2xl font-black text-slate-950">{depositAmount} USDC</p>
+              </div>
+
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4">
+                <p className="protocol-font mb-1 text-xs font-black text-slate-500">{t("pools.collateral")}</p>
+                <p className="protocol-font text-2xl font-black text-slate-950">{Math.ceil(depositAmount * (maxParticipants - 1) * 1.25)} USDC</p>
+                <p className="mt-1 text-xs font-semibold text-slate-500">Returned at the end of the cycle with yield bonus when available</p>
+              </div>
+
+              <div>
+                <label className="protocol-font mb-2 block text-xs font-black uppercase tracking-[0.14em] text-slate-500">USDC Coin</label>
+                {usdcCoins.length > 0 ? (
+                  <select
+                    value={joinCoinId}
+                    onChange={(e) => setJoinCoinId(e.target.value)}
+                    className="min-h-[44px] w-full rounded-2xl border-2 border-slate-950 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none focus:bg-[#dff8ff]"
+                  >
+                    {usdcCoins.map((c) => (
+                      <option key={c.coinObjectId} value={c.coinObjectId}>
+                        {c.coinObjectId.slice(0, 10)}... ({c.balance.toFixed(2)} USDC)
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={joinCoinId}
+                    onChange={(e) => setJoinCoinId(e.target.value)}
+                    placeholder="0x... (no USDC coins found)"
+                    className="min-h-[44px] w-full rounded-2xl border-2 border-slate-950 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none focus:bg-[#dff8ff]"
+                  />
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={handleJoinPool}
+                disabled={joining}
+                className={`protocol-font w-full rounded-xl border-2 border-slate-950 py-3 font-black transition-all ${
+                  joining
+                    ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                    : "bg-sky-400 text-slate-950 shadow-[4px_4px_0_#06111f] hover:-translate-y-0.5"
+                }`}
+              >
+                {joining ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Joining...
+                  </span>
+                ) : (
+                  t("pools.join")
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
+      {/* Make Deposit Modal */}
       {showDepositModal && (
-        <ActionModal
-          title="Contribute This Cycle"
-          primaryLabel="Submit Contribution"
-          pendingLabel={depositing ? "Submitting..." : "Finalizing..."}
-          pending={depositing || confirmingDeposit}
-          disabled={!hasEnoughForDeposit}
-          onClose={() => setShowDepositModal(false)}
-          onSubmit={() => makeDeposit(poolAddress)}
-          rows={[
-            ["Deposit Amount", `${pool.depositAmount} USDC`],
-            ["Current Cycle", `${pool.currentCycle} of ${pool.maxParticipants}`],
-            ["Flow", "One Sui transaction"],
-          ]}
-          warning={!hasEnoughForDeposit ? `Insufficient USDC. You need ${pool.depositAmount} USDC but only have ${usdcBalance.toFixed(2)} USDC.` : undefined}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowDepositModal(false)} />
+          <div className="relative w-full max-w-md rounded-[1.75rem] border-2 border-slate-950 bg-white p-6 shadow-[8px_8px_0_#06111f]">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-2xl font-black tracking-[-0.04em] text-slate-950">{t("detail.makeDeposit")}</h3>
+              <button onClick={() => setShowDepositModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#fbf7ed] p-4">
+                <p className="protocol-font mb-1 text-xs font-black text-slate-500">Deposit Amount</p>
+                <p className="protocol-font text-2xl font-black text-slate-950">{depositAmount} USDC</p>
+              </div>
+
+              <div className="rounded-2xl border-2 border-slate-950 bg-[#dff8ff] p-4">
+                <p className="protocol-font mb-1 text-xs font-black text-slate-500">Current Cycle</p>
+                <p className="protocol-font text-2xl font-black text-slate-950">{currentCycle} of {maxParticipants}</p>
+              </div>
+
+              <div>
+                <label className="protocol-font mb-2 block text-xs font-black uppercase tracking-[0.14em] text-slate-500">USDC Coin</label>
+                {usdcCoins.length > 0 ? (
+                  <select
+                    value={depositCoinId}
+                    onChange={(e) => setDepositCoinId(e.target.value)}
+                    className="min-h-[44px] w-full rounded-2xl border-2 border-slate-950 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none focus:bg-[#dff8ff]"
+                  >
+                    {usdcCoins.map((c) => (
+                      <option key={c.coinObjectId} value={c.coinObjectId}>
+                        {c.coinObjectId.slice(0, 10)}... ({c.balance.toFixed(2)} USDC)
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={depositCoinId}
+                    onChange={(e) => setDepositCoinId(e.target.value)}
+                    placeholder="0x... (no USDC coins found)"
+                    className="min-h-[44px] w-full rounded-2xl border-2 border-slate-950 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none focus:bg-[#dff8ff]"
+                  />
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <button
+                onClick={handleMakeDeposit}
+                disabled={depositing}
+                className={`protocol-font w-full rounded-xl border-2 border-slate-950 py-3 font-black transition-all ${
+                  depositing
+                    ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                    : "bg-sky-400 text-slate-950 shadow-[4px_4px_0_#06111f] hover:-translate-y-0.5"
+                }`}
+              >
+                {depositing ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    Depositing...
+                  </span>
+                ) : (
+                  "Make Deposit"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
+      {/* Success Celebration */}
       <SuccessCelebration
         show={showSuccessCelebration}
         title={successMessage.title}
@@ -408,76 +598,5 @@ export default function PoolDetailPage() {
 
       <Footer />
     </main>
-  );
-}
-
-function ActionModal({
-  title,
-  primaryLabel,
-  pendingLabel,
-  pending,
-  disabled,
-  onClose,
-  onSubmit,
-  rows,
-  warning,
-}: {
-  title: string;
-  primaryLabel: string;
-  pendingLabel: string;
-  pending: boolean;
-  disabled: boolean;
-  onClose: () => void;
-  onSubmit: () => void;
-  rows: Array<[string, string]>;
-  warning?: string;
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md rounded-[1.75rem] border-2 border-slate-950 bg-white p-6 shadow-[8px_8px_0_#06111f]">
-        <div className="mb-6 flex items-center justify-between">
-          <h3 className="text-2xl font-black tracking-[-0.04em] text-slate-950">{title}</h3>
-          <button onClick={onClose} className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-slate-950 bg-sky-400 text-slate-950 transition hover:-translate-y-0.5">
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M6 18 18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="mb-6 space-y-4">
-          {rows.map(([label, value], index) => (
-            <div className={`rounded-2xl border-2 border-slate-950 p-4 ${index === 1 ? "bg-[#dff8ff]" : "bg-[#fbf7ed]"}`} key={label}>
-              <p className="protocol-font mb-1 text-xs font-black uppercase tracking-[0.14em] text-slate-500">{label}</p>
-              <p className="protocol-font text-xl font-black text-slate-950">{value}</p>
-            </div>
-          ))}
-          {warning && (
-            <div className="rounded-2xl border-2 border-slate-950 bg-[#ffe0d8] p-4">
-              <p className="text-sm font-bold text-slate-700">{warning}</p>
-            </div>
-          )}
-        </div>
-
-        <button
-          onClick={onSubmit}
-          disabled={disabled || pending}
-          className={`protocol-font w-full rounded-xl border-2 border-slate-950 py-3 font-black transition-all ${
-            disabled || pending
-              ? "cursor-not-allowed bg-slate-100 text-slate-400"
-              : "bg-sky-400 text-slate-950 shadow-[4px_4px_0_#06111f] hover:-translate-y-0.5"
-          }`}
-        >
-          {pending ? (
-            <span className="flex items-center justify-center gap-2">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-b-white" />
-              {pendingLabel}
-            </span>
-          ) : (
-            primaryLabel
-          )}
-        </button>
-      </div>
-    </div>
   );
 }

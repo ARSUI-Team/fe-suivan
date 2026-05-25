@@ -1,130 +1,153 @@
 "use client";
 
 import { useState } from "react";
-import ConnectWallet from "@/components/ConnectWallet";
+import Link from "next/link";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { useLanguage } from "@/context/LanguageContext";
+import { ArrowRight, Check, Users, Wallet, Trophy, Gift } from "lucide-react";
 
-const STEPS = [
+interface Step {
+  icon: typeof Users;
+  title: string;
+  subtitle: string;
+  detail: string;
+  action: string;
+}
+
+const steps: Step[] = [
   {
-    title: "Choose a pool",
-    copy: "Review members, commitment, cycle length, and APY signal before joining.",
-    stat: "8 members",
+    icon: Wallet,
+    title: "Connect",
+    subtitle: "zkLogin — No Wallet Required",
+    detail: "Sign in with Google via zkLogin. Suivan creates a Sui wallet for you automatically. No seed phrases, no browser extensions, no gas fees for first join.",
+    action: "Try Google Login",
   },
   {
-    title: "Join in one Sui transaction",
-    copy: "No pre-authorization step. Suivan prepares one transaction and can route it through a sponsored relayer.",
-    stat: "Gasless-ready",
+    icon: Users,
+    title: "Join a Pool",
+    subtitle: "Pick Your ROSCA Circle",
+    detail: "Browse available pools (Small: 10 USDC, Medium: 50 USDC, Large: 100 USDC). Deposit collateral once — your commitment to the group. Sponsored transaction means you pay ZERO gas.",
+    action: "Sponsored Join",
   },
   {
-    title: "Contribute each cycle",
-    copy: "Your participant status, progress, and contribution state stay visible in the pool view.",
-    stat: "Cycle 2/8",
+    icon: Wallet,
+    title: "Contribute Monthly",
+    subtitle: "Automatic Cycle Deposits",
+    detail: "Each cycle, deposit your share. Suivan tracks deposits per cycle — no double-deposit exploits. Miss a payment? Collateral is slashed proportionally.",
+    action: "Make Deposit",
   },
   {
-    title: "Track payout and yield",
-    copy: "Payout order, idle-fund yield, and completion state are exposed as simple member progress.",
-    stat: "8.5% APY",
+    icon: Trophy,
+    title: "Win the Pot",
+    subtitle: "Random Selection, Fair Payout",
+    detail: "One participant wins the pool each cycle. Selection uses on-chain entropy (tx digest + timestamp). Winner receives all cycle deposits + yield bonus.",
+    action: "Select Winner",
   },
-] as const;
+  {
+    icon: Gift,
+    title: "Settle & Earn Yield",
+    subtitle: "AI-Optimized Returns",
+    detail: "Idle pool funds are routed to Sui DeFi protocols (Cetus, NAVI, Scallop) for yield. APY signals from DeFiLlama — real data, real returns. After all cycles complete, collateral is returned.",
+    action: "View Yield Dashboard",
+  },
+];
 
 export default function DemoPage() {
   const [activeStep, setActiveStep] = useState(0);
-  const step = STEPS[activeStep];
+  const { t } = useLanguage();
+  const current = steps[activeStep];
+  const Icon = current.icon;
 
   return (
     <main className="min-h-screen bg-[#fbf7ed] text-slate-950">
       <Header />
       <section className="px-5 pb-20 pt-32 md:px-10 lg:px-12">
         <div className="mx-auto max-w-6xl">
-          <div className="rounded-[2rem] border-2 border-slate-950 bg-slate-950 p-8 text-white shadow-[8px_8px_0_#14b8a6] md:p-12">
-            <p className="protocol-font mb-5 inline-flex rounded-full border-2 border-white bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-slate-950">
-              interactive_walkthrough
-            </p>
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.06em] md:text-7xl">
-              Try the Suivan pool flow.
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg font-semibold leading-8 text-slate-300">
-              A judge-friendly walkthrough of how a global ROSCA pool works on Sui: choose, join,
-              contribute, and track payout progress.
-            </p>
-          </div>
+          <p className="protocol-font mb-3 inline-flex rounded-full border-2 border-slate-950 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-slate-950 shadow-[4px_4px_0_#06111f]">
+            {t("demo.badge")}
+          </p>
+          <h1 className="max-w-3xl text-5xl font-black leading-[0.95] tracking-[-0.06em] md:text-7xl">
+            {t("demo.title")}
+          </h1>
+          <p className="mt-4 max-w-2xl text-lg font-semibold leading-8 text-slate-500">
+            {t("demo.subtitle")}
+          </p>
 
-          <div className="mt-8 grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-            <div className="space-y-3">
-              {STEPS.map((item, index) => (
+          <div className="mt-12 grid gap-8 lg:grid-cols-5">
+            {steps.map((step, i) => {
+              const StepIcon = step.icon;
+              const isActive = i === activeStep;
+              const isDone = i < activeStep;
+              return (
                 <button
-                  className={`w-full rounded-[1.25rem] border-2 border-slate-950 p-5 text-left shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5 ${
-                    activeStep === index ? "bg-sky-400" : "bg-white"
+                  key={step.title}
+                  className={`rounded-2xl border-2 p-4 text-left transition-all ${
+                    isActive
+                      ? "border-teal-500 bg-teal-50 shadow-[4px_4px_0_#14b8a6]"
+                      : isDone
+                        ? "border-slate-950 bg-white opacity-60 shadow-[3px_3px_0_#06111f]"
+                        : "border-slate-200 bg-white opacity-40 hover:opacity-70"
                   }`}
-                  key={item.title}
-                  onClick={() => setActiveStep(index)}
+                  onClick={() => setActiveStep(i)}
                   type="button"
                 >
-                  <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-slate-500">Step 0{index + 1}</p>
-                  <p className="mt-2 text-xl font-black tracking-[-0.03em]">{item.title}</p>
-                </button>
-              ))}
-            </div>
-
-            <div className="overflow-hidden rounded-[2rem] border-2 border-slate-950 bg-white shadow-[8px_8px_0_#06111f]">
-              <div className="border-b-2 border-slate-950 bg-[#dff8ff] p-6">
-                <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-sky-700">
-                  live_demo_panel
-                </p>
-                <h2 className="mt-3 text-4xl font-black tracking-[-0.05em]">{step.title}</h2>
-                <p className="mt-4 max-w-xl font-semibold leading-7 text-slate-600">{step.copy}</p>
-              </div>
-
-              <div className="grid gap-4 p-6 md:grid-cols-2">
-                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-[#fbf7ed] p-5">
-                  <p className="protocol-font text-xs font-black uppercase tracking-[0.16em] text-slate-500">Current state</p>
-                  <p className="protocol-font mt-10 text-4xl font-black">{step.stat}</p>
-                </div>
-                <div className="rounded-[1.5rem] border-2 border-slate-950 bg-[#d9f8df] p-5">
-                  <p className="protocol-font text-xs font-black uppercase tracking-[0.16em] text-slate-500">Sui UX</p>
-                  <p className="mt-10 text-lg font-black leading-7">Wallet Standard, sponsored transaction ready, zkLogin ready.</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-3 border-t-2 border-slate-950 p-6 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex gap-2">
-                  {STEPS.map((item, index) => (
+                  <div className="flex items-center gap-2">
                     <span
-                      className={`h-3 rounded-full border-2 border-slate-950 transition-all ${
-                        activeStep === index ? "w-10 bg-sky-400" : "w-3 bg-white"
+                      className={`grid size-7 shrink-0 place-items-center rounded-full text-xs font-black ${
+                        isDone
+                          ? "bg-teal-500 text-white"
+                          : isActive
+                            ? "bg-slate-950 text-white"
+                            : "bg-slate-200 text-slate-500"
                       }`}
-                      key={item.title}
-                    />
-                  ))}
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    className="protocol-font rounded-full border-2 border-slate-950 bg-white px-5 py-3 text-sm font-black transition hover:bg-[#fff1c7]"
-                    onClick={() => setActiveStep((value) => Math.max(value - 1, 0))}
-                    type="button"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    className="protocol-font rounded-full border-2 border-slate-950 bg-sky-400 px-5 py-3 text-sm font-black text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5"
-                    onClick={() => setActiveStep((value) => (value + 1) % STEPS.length)}
-                    type="button"
-                  >
-                    Next Step
-                  </button>
-                </div>
-              </div>
-            </div>
+                    >
+                      {isDone ? <Check className="size-3.5" /> : i + 1}
+                    </span>
+                    <StepIcon className="size-4 text-slate-500" />
+                  </div>
+                  <p className="protocol-font mt-3 text-[10px] font-black uppercase tracking-wider text-slate-500">
+                    {t("demo.step")} {i + 1}
+                  </p>
+                  <p className="mt-1 text-sm font-black">{t(`demo.step${i + 1}Title`)}</p>
+                </button>
+              );
+            })}
           </div>
 
-          <div className="mt-8 rounded-[1.5rem] border-2 border-slate-950 bg-white p-5 shadow-[5px_5px_0_#06111f]">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div>
-                <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-sky-700">testnet_action</p>
-                <p className="mt-2 text-lg font-black">Connect a Sui wallet to test the same flow on pool pages.</p>
-              </div>
-              <ConnectWallet variant="header" />
+          <div className="mt-8 rounded-[2rem] border-2 border-slate-950 bg-white p-8 shadow-[8px_8px_0_#06111f] md:p-12">
+            <Icon className="size-10 text-teal-500" />
+            <h2 className="mt-4 text-3xl font-black tracking-[-0.04em]">{t(`demo.step${activeStep + 1}Title`)}</h2>
+            <p className="protocol-font mt-1 text-sm font-bold text-teal-600">
+              {t(`demo.step${activeStep + 1}Sub`)}
+            </p>
+            <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-500">
+              {t(`demo.step${activeStep + 1}Detail`)}
+            </p>
+            <Link
+              href={activeStep === 0 ? "/" : activeStep === 1 ? "/pools" : activeStep === 4 ? "/ai" : "/pools"}
+              className="protocol-font mt-8 inline-flex h-12 items-center gap-2 rounded-full border-2 border-slate-950 bg-slate-950 px-6 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-teal-500 hover:text-slate-950"
+            >
+              {t(`demo.step${activeStep + 1}Action`)}
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border-2 border-slate-950 bg-white p-5 shadow-[4px_4px_0_#06111f]">
+              <p className="protocol-font text-xs font-black text-teal-500">sui_native</p>
+              <p className="mt-2 text-lg font-black">{t("demo.feature1Title")}</p>
+              <p className="mt-1 text-sm text-slate-500">{t("demo.feature1Desc")}</p>
+            </div>
+            <div className="rounded-2xl border-2 border-slate-950 bg-white p-5 shadow-[4px_4px_0_#06111f]">
+              <p className="protocol-font text-xs font-black text-teal-500">ai_yield</p>
+              <p className="mt-2 text-lg font-black">{t("demo.feature2Title")}</p>
+              <p className="mt-1 text-sm text-slate-500">{t("demo.feature2Desc")}</p>
+            </div>
+            <div className="rounded-2xl border-2 border-slate-950 bg-white p-5 shadow-[4px_4px_0_#06111f]">
+              <p className="protocol-font text-xs font-black text-teal-500">walrus_storage</p>
+              <p className="mt-2 text-lg font-black">{t("demo.feature3Title")}</p>
+              <p className="mt-1 text-sm text-slate-500">{t("demo.feature3Desc")}</p>
             </div>
           </div>
         </div>
