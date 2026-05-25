@@ -92,34 +92,38 @@ export default function PoolAnalyticsChart({
               {title}
             </h3>
             <p className="mt-2 max-w-xl text-sm font-semibold leading-6 text-slate-500">
-              Mock analytics surface for APY and TVL. The component is ready to swap into live
-              Sui protocol data when the API boundary is finalized.
+              APY and TVL signals for pool-level yield visibility. The chart is structured for
+              live Sui indexer data and already matches the production pool UI.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {(["apy", "tvl"] as const).map((item) => (
-              <button
-                key={item}
-                onClick={() => setMetric(item)}
-                className={`protocol-font min-h-[42px] rounded-full border-2 border-slate-950 px-4 text-xs font-black uppercase tracking-[0.14em] transition hover:-translate-y-0.5 ${
-                  metric === item ? "bg-slate-950 text-white" : "bg-white text-slate-950 hover:bg-[#dff8ff]"
-                }`}
-              >
-                {item}
-              </button>
-            ))}
-            {([7, 14, 30] as const).map((days) => (
-              <button
-                key={days}
-                onClick={() => setTimeRange(days)}
-                className={`protocol-font min-h-[42px] rounded-full border-2 border-slate-950 px-4 text-xs font-black uppercase tracking-[0.14em] transition hover:-translate-y-0.5 ${
-                  timeRange === days ? "bg-sky-400 text-slate-950" : "bg-white text-slate-950 hover:bg-[#fff1c7]"
-                }`}
-              >
-                {days}D
-              </button>
-            ))}
+          <div className="flex shrink-0 flex-col items-stretch gap-2 sm:items-end">
+            <div className="grid grid-cols-2 gap-2">
+              {(["apy", "tvl"] as const).map((item) => (
+                <button
+                  key={item}
+                  onClick={() => setMetric(item)}
+                  className={`protocol-font min-h-[42px] min-w-[72px] rounded-full border-2 border-slate-950 px-4 text-xs font-black uppercase tracking-[0.14em] transition hover:-translate-y-0.5 ${
+                    metric === item ? "bg-slate-950 text-white" : "bg-white text-slate-950 hover:bg-[#dff8ff]"
+                  }`}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {([7, 14, 30] as const).map((days) => (
+                <button
+                  key={days}
+                  onClick={() => setTimeRange(days)}
+                  className={`protocol-font min-h-[42px] min-w-[72px] rounded-full border-2 border-slate-950 px-4 text-xs font-black uppercase tracking-[0.14em] transition hover:-translate-y-0.5 ${
+                    timeRange === days ? "bg-sky-400 text-slate-950" : "bg-white text-slate-950 hover:bg-[#fff1c7]"
+                  }`}
+                >
+                  {days}D
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 

@@ -52,7 +52,7 @@ const translations: Record<string, string> = {
   "faq.title": "Frequently Asked Questions",
   "faq.subtitle": "Answers about Suivan, ROSCA pools, Sui-native settlement, and the current frontend migration.",
   "faq.q1": "What is Suivan?",
-  "faq.a1": "Suivan is a frontend direction for a global ROSCA protocol built around Sui-native community finance. The frontend is being designed to connect cleanly to new contracts and backend APIs once they are finalized.",
+  "faq.a1": "Suivan is a frontend direction for a global ROSCA protocol built around Sui-native community finance. The frontend is designed to connect cleanly to new contracts and backend APIs.",
   "faq.q2": "What is ROSCA?",
   "faq.a2": "ROSCA stands for Rotating Savings and Credit Association. Members contribute on a recurring cycle, and one member receives the pooled payout each round until everyone has received a turn.",
   "faq.q3": "How does Arisan relate to ROSCA?",
@@ -60,7 +60,7 @@ const translations: Record<string, string> = {
   "faq.q4": "Why build this on Sui?",
   "faq.a4": "Sui gives Suivan a strong direction for fast settlement, low fees, transparent object-oriented state, and scalable community finance experiences.",
   "faq.q5": "Are the contracts and API final?",
-  "faq.a5": "No. The smart contract and backend layers are being rebuilt separately. The current frontend keeps integration boundaries modular and avoids locking into old ABI, address, or response-shape assumptions.",
+  "faq.a5": "No. The smart contract and backend layers are developed separately. The current frontend keeps Sui adapters modular and avoids locking into inherited address or response-shape assumptions.",
   "faq.q6": "What pool data will the frontend show?",
   "faq.a6": "The frontend is prepared for pool lists, pool detail, join flow, contribution flow, participant status, cycle progress, APY signals, and yield summaries.",
   "faq.q7": "Is Suivan custodial?",
@@ -78,7 +78,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("suivan-language", "en");
   }, []);
 
-  const setLanguage = (_lang: Language) => {
+  const setLanguage = (lang: Language) => {
+    void lang;
     setLanguageState("en");
     localStorage.setItem("suivan-language", "en");
   };

@@ -1,16 +1,9 @@
-/**
- * AI Yield Optimizer Engine for Archa
- * Analyzes DeFi protocol yields and recommends optimal allocation
- * Uses real data from DeFiLlama API for Mantle Network protocols
- */
-
-// Protocol data types
 export interface ProtocolYield {
   name: string;
   address: string;
   apy: number;
   tvl: number;
-  riskScore: number; // 1-10, lower is safer
+  riskScore: number;
   lastUpdated: Date;
   source: "defillama" | "fallback";
   chain: string;
@@ -22,7 +15,7 @@ export interface YieldRecommendation {
   recommendedAddress: string;
   expectedApy: number;
   riskLevel: "low" | "medium" | "high";
-  confidence: number; // 0-100
+  confidence: number;
   reasoning: string[];
   allocation: AllocationStrategy[];
 }
@@ -35,13 +28,12 @@ export interface AllocationStrategy {
 }
 
 export interface MarketCondition {
-  volatilityIndex: number; // 0-100
+  volatilityIndex: number;
   trendDirection: "bullish" | "bearish" | "neutral";
-  gasPrice: number; // in gwei
+  gasPrice: number;
   dataSource: "live" | "cached";
 }
 
-// DeFiLlama API types
 interface DefiLlamaPool {
   chain: string;
   project: string;
@@ -49,66 +41,56 @@ interface DefiLlamaPool {
   tvlUsd: number;
   apy: number;
   pool: string;
-  apyBase?: number;
-  apyReward?: number;
-  rewardTokens?: string[];
   stablecoin: boolean;
 }
 
-// Deployed vault addresses on Mantle Sepolia (V2 - Real USDC Routing)
-export const VAULT_ADDRESSES = {
-  lendle: "0x8b01b91bdf61E41051ad1F494901e02175B7784D",
-  merchantMoe: "0x5b4501f4B18fb500a240B7D33d323c2A7d4d3FC0",
-  agni: "0x7248BcB7a4B604A39709dD95d53ea7C0eCA17612",
-  minterest: "0xd8951BdcBe186270e05e9942d72a069019Ca9aa2",
-  ktx: "0x6868d3027414D4Dc81fFf9181eEEE2Ea078aD3c2",
-} as const;
-
-// Protocol name mapping for DeFiLlama
-const DEFILLAMA_PROJECT_MAPPING: Record<string, string> = {
-  "lendle": "lendle",
-  "merchant-moe": "merchant-moe",
-  "agni-finance": "agni-finance",
-  "minterest": "minterest",
-  "ktx-finance": "ktx-finance",
-};
-
-// Base APY rates as fallback (if API fails)
-const FALLBACK_APY_RATES: Record<string, number> = {
-  lendle: 8.5,
-  merchantMoe: 12.0,
-  agni: 9.5,
-  minterest: 7.2,
-  ktx: 15.0,
-};
-
-// Risk scores for each protocol (lower = safer) - based on audit status, TVL, time in market
-const PROTOCOL_RISK_SCORES: Record<string, number> = {
-  lendle: 3, // Established lending protocol, audited
-  merchantMoe: 5, // DEX with moderate risk, newer
-  agni: 4, // DEX on Mantle, audited
-  minterest: 2, // Conservative lending, multiple audits
-  ktx: 7, // Perpetual DEX, higher risk due to leverage
-};
-
-// Cache for API responses
 let yieldsCache: { data: ProtocolYield[]; timestamp: number } | null = null;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 5 * 60 * 1000;
 
-/**
- * Fetches real-time yield data from DeFiLlama API
- * Falls back to simulated data if API is unavailable
- */
+const FALLBACK_SUI_POOLS: ProtocolYield[] = [
+  {
+    name: "Navi Protocol",
+    address: "sui:navi",
+    apy: 6.8,
+    tvl: 52000000,
+    riskScore: 3,
+    lastUpdated: new Date(),
+    source: "fallback",
+    chain: "Sui",
+    pool: "USDC",
+  },
+  {
+    name: "Scallop",
+    address: "sui:scallop",
+    apy: 5.9,
+    tvl: 47000000,
+    riskScore: 3,
+    lastUpdated: new Date(),
+    source: "fallback",
+    chain: "Sui",
+    pool: "USDC",
+  },
+  {
+    name: "Cetus",
+    address: "sui:cetus",
+    apy: 8.2,
+    tvl: 31000000,
+    riskScore: 5,
+    lastUpdated: new Date(),
+    source: "fallback",
+    chain: "Sui",
+    pool: "USDC-SUI",
+  },
+];
+
 export async function fetchProtocolYields(): Promise<ProtocolYield[]> {
-  // Check cache first
   if (yieldsCache && Date.now() - yieldsCache.timestamp < CACHE_DURATION) {
     return yieldsCache.data;
   }
 
   try {
-    // Fetch from DeFiLlama yields API
     const response = await fetch("https://yields.llama.fi/pools", {
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      cache: "no-store",
     });
 
     if (!response.ok) {
@@ -117,351 +99,124 @@ export async function fetchProtocolYields(): Promise<ProtocolYield[]> {
 
     const data = await response.json();
     const pools: DefiLlamaPool[] = data.data || [];
+    const suiPools = pools
+      .filter((pool) => pool.chain.toLowerCase() === "sui" && pool.tvlUsd > 250000 && Number.isFinite(pool.apy))
+      .sort((a, b) => b.tvlUsd - a.tvlUsd)
+      .slice(0, 6)
+      .map((pool) => ({
+        name: formatProtocolName(pool.project),
+        address: pool.pool,
+        apy: Number(pool.apy.toFixed(2)),
+        tvl: pool.tvlUsd,
+        riskScore: pool.stablecoin ? 3 : 5,
+        lastUpdated: new Date(),
+        source: "defillama" as const,
+        chain: "Sui",
+        pool: pool.symbol,
+      }));
 
-    // Filter for Mantle chain protocols we support
-    const mantlePools = pools.filter(
-      (pool) =>
-        pool.chain.toLowerCase() === "mantle" &&
-        Object.values(DEFILLAMA_PROJECT_MAPPING).includes(pool.project.toLowerCase())
-    );
-
-    // Group by project and get best pool for each
-    const projectPools = new Map<string, DefiLlamaPool>();
-
-    for (const pool of mantlePools) {
-      const existing = projectPools.get(pool.project);
-      // Prefer stablecoin pools, then highest APY
-      if (
-        !existing ||
-        (pool.stablecoin && !existing.stablecoin) ||
-        (pool.stablecoin === existing.stablecoin && pool.apy > existing.apy)
-      ) {
-        projectPools.set(pool.project, pool);
-      }
-    }
-
-    // Convert to our protocol format
-    const protocols: ProtocolYield[] = [];
-
-    // Add protocols from DeFiLlama data
-    const projectEntries = Array.from(projectPools.entries());
-    for (const [project, pool] of projectEntries) {
-      const protocolKey = Object.entries(DEFILLAMA_PROJECT_MAPPING).find(
-        ([, v]) => v === project.toLowerCase()
-      )?.[0];
-
-      if (protocolKey) {
-        const vaultKey = protocolKey.replace("-", "") as keyof typeof VAULT_ADDRESSES;
-        protocols.push({
-          name: formatProtocolName(project),
-          address: VAULT_ADDRESSES[vaultKey] || pool.pool,
-          apy: pool.apy || 0,
-          tvl: pool.tvlUsd || 0,
-          riskScore: PROTOCOL_RISK_SCORES[vaultKey] || 5,
-          lastUpdated: new Date(),
-          source: "defillama",
-          chain: "Mantle",
-          pool: pool.symbol,
-        });
-      }
-    }
-
-    // Add fallback protocols if not found in DeFiLlama
-    const foundProjects = protocols.map((p) => p.name.toLowerCase());
-    const fallbackProtocols = getFallbackProtocols().filter(
-      (p) => !foundProjects.includes(p.name.toLowerCase())
-    );
-
-    const combinedProtocols = [...protocols, ...fallbackProtocols];
-
-    // Update cache
-    yieldsCache = { data: combinedProtocols, timestamp: Date.now() };
-
-    return combinedProtocols;
+    const result = suiPools.length > 0 ? suiPools : getFallbackProtocols();
+    yieldsCache = { data: result, timestamp: Date.now() };
+    return result;
   } catch (error) {
-    console.error("Error fetching from DeFiLlama:", error);
-    // Return fallback data
+    console.error("Error fetching Sui yields from DeFiLlama:", error);
     return getFallbackProtocols();
   }
 }
 
-/**
- * Format protocol name for display
- */
 function formatProtocolName(name: string): string {
-  const nameMap: Record<string, string> = {
-    "lendle": "Lendle",
-    "merchant-moe": "Merchant Moe",
-    "agni-finance": "Agni Finance",
-    "minterest": "Minterest",
-    "ktx-finance": "KTX Finance",
-  };
-  return nameMap[name.toLowerCase()] || name;
+  return name
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 }
 
-/**
- * Get fallback protocol data when API is unavailable
- */
 function getFallbackProtocols(): ProtocolYield[] {
-  const variance = () => (Math.random() - 0.5) * 2;
-
-  return [
-    {
-      name: "Lendle",
-      address: VAULT_ADDRESSES.lendle,
-      apy: FALLBACK_APY_RATES.lendle + variance(),
-      tvl: 15000000,
-      riskScore: PROTOCOL_RISK_SCORES.lendle,
-      lastUpdated: new Date(),
-      source: "fallback",
-      chain: "Mantle",
-    },
-    {
-      name: "Merchant Moe",
-      address: VAULT_ADDRESSES.merchantMoe,
-      apy: FALLBACK_APY_RATES.merchantMoe + variance(),
-      tvl: 8000000,
-      riskScore: PROTOCOL_RISK_SCORES.merchantMoe,
-      lastUpdated: new Date(),
-      source: "fallback",
-      chain: "Mantle",
-    },
-    {
-      name: "Agni Finance",
-      address: VAULT_ADDRESSES.agni,
-      apy: FALLBACK_APY_RATES.agni + variance(),
-      tvl: 12000000,
-      riskScore: PROTOCOL_RISK_SCORES.agni,
-      lastUpdated: new Date(),
-      source: "fallback",
-      chain: "Mantle",
-    },
-    {
-      name: "Minterest",
-      address: VAULT_ADDRESSES.minterest,
-      apy: FALLBACK_APY_RATES.minterest + variance(),
-      tvl: 20000000,
-      riskScore: PROTOCOL_RISK_SCORES.minterest,
-      lastUpdated: new Date(),
-      source: "fallback",
-      chain: "Mantle",
-    },
-    {
-      name: "KTX Finance",
-      address: VAULT_ADDRESSES.ktx,
-      apy: FALLBACK_APY_RATES.ktx + variance(),
-      tvl: 5000000,
-      riskScore: PROTOCOL_RISK_SCORES.ktx,
-      lastUpdated: new Date(),
-      source: "fallback",
-      chain: "Mantle",
-    },
-  ];
+  return FALLBACK_SUI_POOLS.map((pool) => ({
+    ...pool,
+    apy: Number((pool.apy + (Math.random() - 0.5)).toFixed(2)),
+    lastUpdated: new Date(),
+  }));
 }
 
-/**
- * Get market conditions - tries to fetch real data, falls back to estimates
- */
 export function getMarketConditions(): MarketCondition {
   return {
-    volatilityIndex: Math.floor(Math.random() * 40) + 30, // 30-70
-    trendDirection: Math.random() > 0.5 ? "bullish" : Math.random() > 0.5 ? "bearish" : "neutral",
-    gasPrice: Math.floor(Math.random() * 30) + 10, // 10-40 gwei
+    volatilityIndex: 38,
+    trendDirection: "neutral",
+    gasPrice: 0.01,
     dataSource: yieldsCache ? "cached" : "live",
   };
 }
 
-/**
- * AI Optimizer: Calculates risk-adjusted score for each protocol
- * Score = (APY × 10) - (RiskScore × RiskWeight) + (TVL Bonus)
- */
-function calculateRiskAdjustedScore(
-  protocol: ProtocolYield,
-  riskTolerance: "conservative" | "moderate" | "aggressive"
-): number {
+function calculateRiskAdjustedScore(protocol: ProtocolYield, riskTolerance: "conservative" | "moderate" | "aggressive") {
   const riskWeights = {
-    conservative: 3.0,
+    conservative: 3,
     moderate: 1.5,
     aggressive: 0.5,
   };
-
-  const riskWeight = riskWeights[riskTolerance];
-  const tvlBonus = Math.log10(protocol.tvl / 1000000) * 2; // Bonus for higher TVL
-
-  const score = (protocol.apy * 10) - (protocol.riskScore * riskWeight) + tvlBonus;
-
-  return Math.max(0, score);
+  const tvlBonus = Math.log10(Math.max(protocol.tvl, 1) / 1000000) * 2;
+  return Math.max(0, protocol.apy * 10 - protocol.riskScore * riskWeights[riskTolerance] + tvlBonus);
 }
 
-/**
- * Main AI Recommendation Engine
- * Analyzes all protocols and returns optimal strategy
- */
 export async function generateYieldRecommendation(
-  riskTolerance: "conservative" | "moderate" | "aggressive" = "moderate"
+  riskTolerance: "conservative" | "moderate" | "aggressive" = "moderate",
 ): Promise<YieldRecommendation> {
   const protocols = await fetchProtocolYields();
-  const market = getMarketConditions();
-
-  // Calculate scores for each protocol
-  const scoredProtocols = protocols.map((p) => ({
-    ...p,
-    score: calculateRiskAdjustedScore(p, riskTolerance),
-  }));
-
-  // Sort by score (highest first)
-  scoredProtocols.sort((a, b) => b.score - a.score);
-
+  const scoredProtocols = protocols
+    .map((protocol) => ({ ...protocol, score: calculateRiskAdjustedScore(protocol, riskTolerance) }))
+    .sort((a, b) => b.score - a.score);
   const topProtocol = scoredProtocols[0];
-  const reasoning: string[] = [];
-
-  // Generate reasoning
-  reasoning.push(`Analyzed ${protocols.length} DeFi protocols on Mantle Network`);
-  reasoning.push(`Risk tolerance set to: ${riskTolerance}`);
-  reasoning.push(`Market volatility index: ${market.volatilityIndex}/100`);
-  reasoning.push(`${topProtocol.name} offers ${topProtocol.apy.toFixed(2)}% APY with risk score ${topProtocol.riskScore}/10`);
-
-  if (market.volatilityIndex > 60) {
-    reasoning.push("High volatility detected - favoring lower-risk protocols");
-  }
-
-  // Determine risk level
-  let riskLevel: "low" | "medium" | "high" = "medium";
-  if (topProtocol.riskScore <= 3) riskLevel = "low";
-  else if (topProtocol.riskScore >= 6) riskLevel = "high";
-
-  // Calculate allocation strategy
-  const allocation: AllocationStrategy[] = [];
-
-  if (riskTolerance === "conservative") {
-    // Conservative: 70% top, 30% second
-    allocation.push({
-      protocol: scoredProtocols[0].name,
-      address: scoredProtocols[0].address,
-      percentage: 70,
-      expectedYield: scoredProtocols[0].apy * 0.7,
-    });
-    allocation.push({
-      protocol: scoredProtocols[1].name,
-      address: scoredProtocols[1].address,
-      percentage: 30,
-      expectedYield: scoredProtocols[1].apy * 0.3,
-    });
-  } else if (riskTolerance === "moderate") {
-    // Moderate: 50% top, 30% second, 20% third
-    allocation.push({
-      protocol: scoredProtocols[0].name,
-      address: scoredProtocols[0].address,
-      percentage: 50,
-      expectedYield: scoredProtocols[0].apy * 0.5,
-    });
-    allocation.push({
-      protocol: scoredProtocols[1].name,
-      address: scoredProtocols[1].address,
-      percentage: 30,
-      expectedYield: scoredProtocols[1].apy * 0.3,
-    });
-    allocation.push({
-      protocol: scoredProtocols[2].name,
-      address: scoredProtocols[2].address,
-      percentage: 20,
-      expectedYield: scoredProtocols[2].apy * 0.2,
-    });
-  } else {
-    // Aggressive: 80% top protocol
-    allocation.push({
-      protocol: scoredProtocols[0].name,
-      address: scoredProtocols[0].address,
-      percentage: 80,
-      expectedYield: scoredProtocols[0].apy * 0.8,
-    });
-    allocation.push({
-      protocol: scoredProtocols[1].name,
-      address: scoredProtocols[1].address,
-      percentage: 20,
-      expectedYield: scoredProtocols[1].apy * 0.2,
-    });
-  }
-
-  // Calculate total expected APY
-  const totalExpectedApy = allocation.reduce((sum, a) => sum + a.expectedYield, 0);
-
-  // Calculate confidence based on market conditions and data freshness
-  let confidence = 85;
-  if (market.volatilityIndex > 60) confidence -= 10;
-  if (market.trendDirection === "bearish") confidence -= 5;
-  confidence = Math.max(60, Math.min(95, confidence));
+  const allocation = scoredProtocols.slice(0, 3).map((protocol, index) => ({
+    protocol: protocol.name,
+    address: protocol.address,
+    percentage: index === 0 ? 50 : index === 1 ? 30 : 20,
+    expectedYield: protocol.apy * (index === 0 ? 0.5 : index === 1 ? 0.3 : 0.2),
+  }));
 
   return {
     recommendedProtocol: topProtocol.name,
     recommendedAddress: topProtocol.address,
-    expectedApy: totalExpectedApy,
-    riskLevel,
-    confidence,
-    reasoning,
+    expectedApy: Number(allocation.reduce((sum, item) => sum + item.expectedYield, 0).toFixed(2)),
+    riskLevel: topProtocol.riskScore <= 3 ? "low" : topProtocol.riskScore >= 6 ? "high" : "medium",
+    confidence: topProtocol.source === "defillama" ? 88 : 72,
+    reasoning: [
+      `Analyzed ${protocols.length} Sui yield pools from DeFiLlama.`,
+      `Risk tolerance set to ${riskTolerance}.`,
+      `${topProtocol.name} currently has the strongest risk-adjusted signal.`,
+    ],
     allocation,
   };
 }
 
-/**
- * Get historical performance data (simulated based on fallback rates)
- */
-export function getHistoricalPerformance(days: number = 30): {
-  date: string;
-  apy: number;
-  protocol: string;
-}[] {
-  const history = [];
-  const protocols = Object.keys(FALLBACK_APY_RATES);
+export function getHistoricalPerformance(days: number = 30) {
+  const protocols = FALLBACK_SUI_POOLS;
 
-  for (let i = days; i >= 0; i--) {
+  return Array.from({ length: days + 1 }, (_, index) => {
     const date = new Date();
-    date.setDate(date.getDate() - i);
-
-    const protocol = protocols[Math.floor(Math.random() * protocols.length)];
-    const baseApy = FALLBACK_APY_RATES[protocol];
-    const variance = (Math.random() - 0.5) * 4;
-
-    history.push({
+    date.setDate(date.getDate() - (days - index));
+    const protocol = protocols[index % protocols.length];
+    return {
       date: date.toISOString().split("T")[0],
-      apy: baseApy + variance,
-      protocol: protocol.charAt(0).toUpperCase() + protocol.slice(1),
-    });
-  }
-
-  return history;
+      apy: protocol.apy + Math.sin(index / 3),
+      protocol: protocol.name,
+    };
+  });
 }
 
-/**
- * Calculate optimal rebalancing frequency
- */
 export function getRebalanceRecommendation(
   currentAllocation: AllocationStrategy[],
-  newRecommendation: YieldRecommendation
-): {
-  shouldRebalance: boolean;
-  reason: string;
-  estimatedGasCost: number;
-  expectedBenefit: number;
-} {
-  // Calculate potential APY improvement
-  const currentApy = currentAllocation.reduce((sum, a) => sum + a.expectedYield, 0);
-  const newApy = newRecommendation.expectedApy;
-  const apyImprovement = newApy - currentApy;
-
-  // Estimate gas cost (in USD)
-  const estimatedGasCost = 5; // ~$5 for rebalancing transaction
-
-  // Calculate if rebalancing is worth it (annualized benefit vs gas cost)
-  const annualBenefit = apyImprovement * 100; // Assuming $10000 principal
-  const shouldRebalance = annualBenefit > estimatedGasCost * 12; // At least covers 12 months of gas
+  newRecommendation: YieldRecommendation,
+) {
+  const currentApy = currentAllocation.reduce((sum, item) => sum + item.expectedYield, 0);
+  const apyImprovement = newRecommendation.expectedApy - currentApy;
 
   return {
-    shouldRebalance,
-    reason: shouldRebalance
-      ? `Rebalancing recommended: ${apyImprovement.toFixed(2)}% APY improvement`
-      : `Keep current allocation: improvement (${apyImprovement.toFixed(2)}%) doesn't justify gas costs`,
-    estimatedGasCost,
-    expectedBenefit: annualBenefit,
+    shouldRebalance: apyImprovement > 0.75,
+    reason:
+      apyImprovement > 0.75
+        ? `Rebalance recommended: ${apyImprovement.toFixed(2)}% APY improvement.`
+        : `Keep current allocation: ${apyImprovement.toFixed(2)}% improvement is below threshold.`,
+    estimatedGasCost: 0.01,
+    expectedBenefit: apyImprovement * 100,
   };
 }

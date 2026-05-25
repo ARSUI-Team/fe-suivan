@@ -1,32 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import Header from "@/components/Header";
+import { useCurrentAccount, useCurrentWallet } from "@mysten/dapp-kit";
 import Footer from "@/components/Footer";
-import { useAccount } from "wagmi";
+import Header from "@/components/Header";
 
-const MOCK_LEADERBOARD = [
-  { rank: 1, address: "0x1234...5678", totalEarned: 1250.5, poolsJoined: 5, winRate: 80 },
-  { rank: 2, address: "0x2345...6789", totalEarned: 980.25, poolsJoined: 4, winRate: 75 },
-  { rank: 3, address: "0x3456...7890", totalEarned: 750, poolsJoined: 3, winRate: 66 },
-  { rank: 4, address: "0x4567...8901", totalEarned: 620.75, poolsJoined: 4, winRate: 50 },
-  { rank: 5, address: "0x5678...9012", totalEarned: 540.3, poolsJoined: 3, winRate: 66 },
-];
-
-const STATS = [
-  ["USERS", "156"],
-  ["POOLS", "23"],
-  ["EARNED", "$45.7K"],
-  ["AVG APY", "9.2%"],
+const INDEXER_SIGNALS = [
+  ["Pool completion", "Cycles closed without missed contribution"],
+  ["Reliability score", "Member consistency across community pools"],
+  ["Yield earned", "Claimed payout and idle-fund yield attribution"],
 ] as const;
 
-type SortKey = "totalEarned" | "poolsJoined" | "winRate";
-
 export default function LeaderboardPage() {
-  const { address, isConnected } = useAccount();
-  const [sortBy, setSortBy] = useState<SortKey>("totalEarned");
-  const sortedLeaderboard = [...MOCK_LEADERBOARD].sort((a, b) => b[sortBy] - a[sortBy]);
-  const userRank = isConnected ? Math.floor(Math.random() * 50) + 11 : null;
+  const account = useCurrentAccount();
+  const { isConnected } = useCurrentWallet();
 
   return (
     <main className="min-h-screen bg-[#fbf7ed] text-slate-950">
@@ -35,69 +21,40 @@ export default function LeaderboardPage() {
       <section className="px-5 pb-12 pt-32 md:px-10 lg:px-12">
         <div className="mx-auto max-w-6xl">
           <p className="protocol-font inline-flex rounded-full border-2 border-slate-950 bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.2em] shadow-[4px_4px_0_#06111f]">
-            reputation_board
+            reputation_index
           </p>
           <h1 className="mt-6 max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.06em] md:text-7xl">
-            Community progress, ranked simply.
+            Reputation will come from real Sui pool history.
           </h1>
           <p className="mt-6 max-w-2xl text-lg font-semibold leading-8 text-slate-600">
-            A clean placeholder for contributor reputation, pool completion, and cycle reliability.
+            Suivan will only rank participants after the indexer can read real pool objects, completed
+            cycles, and member contribution history. No synthetic leaderboard is shown to judges.
           </p>
 
-          <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4">
-            {STATS.map(([label, value]) => (
-              <div className="rounded-2xl border-2 border-slate-950 bg-white p-4 shadow-[4px_4px_0_#06111f]" key={label}>
-                <p className="protocol-font text-xs font-black text-slate-400">{label}</p>
-                <p className="protocol-font mt-2 text-3xl font-black">{value}</p>
-              </div>
-            ))}
-          </div>
+          {isConnected && account ? (
+            <div className="protocol-font mt-8 inline-flex rounded-full border-2 border-slate-950 bg-[#fff1c7] px-4 py-2 text-xs font-black shadow-[4px_4px_0_#06111f]">
+              CONNECTED {account.address.slice(0, 6)}...{account.address.slice(-4)}
+            </div>
+          ) : null}
         </div>
       </section>
 
       <section className="px-5 pb-20 md:px-10 lg:px-12">
-        <div className="mx-auto max-w-6xl">
-          <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="rounded-full border-2 border-slate-950 bg-white p-1 shadow-[4px_4px_0_#06111f]">
-              {(["totalEarned", "poolsJoined", "winRate"] as const).map((key) => (
-                <button
-                  className={`protocol-font rounded-full px-4 py-2 text-xs font-black uppercase transition ${
-                    sortBy === key ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-[#dff8ff]"
-                  }`}
-                  key={key}
-                  onClick={() => setSortBy(key)}
-                  type="button"
-                >
-                  {key === "totalEarned" ? "Earned" : key === "poolsJoined" ? "Pools" : "Win Rate"}
-                </button>
-              ))}
+        <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
+          {INDEXER_SIGNALS.map(([title, copy], index) => (
+            <div
+              className={`rounded-[1.5rem] border-2 border-slate-950 p-5 shadow-[5px_5px_0_#06111f] ${
+                index === 0 ? "bg-[#dff8ff]" : index === 1 ? "bg-[#d9f8df]" : "bg-[#fff1c7]"
+              }`}
+              key={title}
+            >
+              <p className="protocol-font text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+                Signal 0{index + 1}
+              </p>
+              <h2 className="mt-8 text-2xl font-black tracking-[-0.04em]">{title}</h2>
+              <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">{copy}</p>
             </div>
-
-            {isConnected && userRank ? (
-              <div className="protocol-font rounded-full border-2 border-slate-950 bg-[#fff1c7] px-4 py-2 text-xs font-black shadow-[4px_4px_0_#06111f]">
-                YOU #{userRank} {address?.slice(0, 6)}...{address?.slice(-4)}
-              </div>
-            ) : null}
-          </div>
-
-          <div className="overflow-hidden rounded-[1.5rem] border-2 border-slate-950 bg-white shadow-[6px_6px_0_#06111f]">
-            {sortedLeaderboard.map((user) => (
-              <div
-                className="grid grid-cols-[auto_1fr_auto] items-center gap-4 border-b-2 border-slate-950 p-4 last:border-b-0 md:grid-cols-[auto_1fr_auto_auto_auto]"
-                key={user.address}
-              >
-                <span className="protocol-font rounded-full border-2 border-slate-950 bg-[#dff8ff] px-3 py-1 text-xs font-black">
-                  R{user.rank}
-                </span>
-                <span className="protocol-font text-sm font-bold text-slate-950">{user.address}</span>
-                <span className="protocol-font text-sm font-black text-teal-700">${user.totalEarned.toFixed(2)}</span>
-                <span className="protocol-font hidden text-sm font-black text-slate-500 md:block">{user.poolsJoined} pools</span>
-                <span className="protocol-font hidden rounded-full bg-[#fff1c7] px-3 py-1 text-xs font-black text-slate-950 md:block">
-                  {user.winRate}%
-                </span>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </section>
 

@@ -7,7 +7,7 @@ interface SuivanLogoProps {
 }
 
 export default function SuivanLogo({
-  size = 40,
+  size = 64,
   className = "",
   priority = false,
 }: SuivanLogoProps) {
@@ -17,7 +17,7 @@ export default function SuivanLogo({
       className={`object-contain ${className}`}
       height={size}
       priority={priority}
-      src="/suivan-icon.svg"
+      src="/suivan-logo.png"
       width={size}
     />
   );

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { LanguageProvider } from "@/context/LanguageContext";
-import { Web3Provider } from "@/providers/Web3Provider";
+import { SuiProvider } from "@/providers/SuiProvider";
 import { ToastProvider } from "@/components/Toast";
 import "./globals.css";
 
@@ -32,12 +32,12 @@ export const metadata: Metadata = {
   keywords: ["Suivan", "ROSCA", "Arisan", "Sui", "community finance", "rotating savings"],
   icons: {
     icon: [
-      { url: "/suivan-icon.svg", type: "image/svg+xml" },
+      { url: "/suivan-logo.png", type: "image/png" },
     ],
     apple: [
-      { url: "/suivan-icon.svg" },
+      { url: "/suivan-logo.png" },
     ],
-    shortcut: ["/suivan-icon.svg"],
+    shortcut: ["/suivan-logo.png"],
   },
 };
 
@@ -49,20 +49,20 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/suivan-icon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/suivan-icon.svg" />
-        <link rel="shortcut icon" href="/suivan-icon.svg" />
+        <link rel="icon" href="/suivan-logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/suivan-logo.png" />
+        <link rel="shortcut icon" href="/suivan-logo.png" />
       </head>
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} ${jetBrainsMono.variable} antialiased`}
       >
-        <Web3Provider>
+        <SuiProvider>
           <LanguageProvider>
             <ToastProvider>
               {children}
             </ToastProvider>
           </LanguageProvider>
-        </Web3Provider>
+        </SuiProvider>
       </body>
     </html>
   );

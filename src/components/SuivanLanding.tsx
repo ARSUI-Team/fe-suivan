@@ -6,7 +6,6 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
-import { ArrowUpRight } from "lucide-react";
 import SuivanLogo from "./SuivanLogo";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -137,7 +136,9 @@ export default function SuivanLanding() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.02fr_0.98fr]">
           <div>
             <div className="suivan-pop mb-5 inline-flex items-center gap-2 rounded-full border-2 border-slate-950 bg-white px-4 py-2 shadow-[4px_4px_0_#06111f]">
-              <SuivanLogo className="size-5" size={20} />
+              <span className="grid size-7 place-items-center overflow-hidden rounded-full">
+                <SuivanLogo className="size-7 scale-[1.28]" size={36} />
+              </span>
               <span className="protocol-font text-xs font-black uppercase tracking-[0.18em]">
                 Sui community wealth
               </span>
@@ -159,7 +160,7 @@ export default function SuivanLanding() {
                 href="/pools"
               >
                 Explore Pools
-                <ArrowUpRight className="size-4" />
+                <ArrowIcon />
               </Link>
               <a
                 className="inline-flex h-12 items-center rounded-full border-2 border-slate-950 bg-white px-6 text-sm font-black text-slate-950 shadow-[4px_4px_0_#06111f] transition hover:-translate-y-0.5"
@@ -306,6 +307,14 @@ function HandIcon() {
       <path d="M27 58l-10 3 7 18 12-5" fill="#61d7ff" stroke="#06111f" strokeWidth="4" strokeLinejoin="round" />
       <path d="M47 47l8-19 10 4-7 19" fill="#fff1c7" stroke="#06111f" strokeWidth="4" strokeLinejoin="round" />
       <path d="M39 52h20" stroke="#06111f" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.4} d="M7 17 17 7M9 7h8v8" />
     </svg>
   );
 }

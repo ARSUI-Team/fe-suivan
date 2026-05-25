@@ -7,7 +7,7 @@ interface SuiFeeProfileProps {
   showDetailed?: boolean;
 }
 
-// Placeholder fee estimates until Suivan's Sui transaction model is finalized.
+// Fee profile used to communicate Suivan's sponsored transaction target.
 const GAS_ESTIMATES = {
   join: {
     gasUsed: 150000,

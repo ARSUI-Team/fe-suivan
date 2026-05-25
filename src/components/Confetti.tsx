@@ -12,6 +12,7 @@ interface ConfettiPiece {
   speedX: number;
   speedY: number;
   speedRotation: number;
+  rounded: boolean;
 }
 
 const COLORS = [
@@ -51,6 +52,7 @@ export default function Confetti({ active, duration = 3000, onComplete }: Confet
         speedX: (Math.random() - 0.5) * 3,
         speedY: 2 + Math.random() * 3,
         speedRotation: (Math.random() - 0.5) * 10,
+        rounded: Math.random() > 0.5,
       });
     }
 
@@ -59,16 +61,21 @@ export default function Confetti({ active, duration = 3000, onComplete }: Confet
 
   useEffect(() => {
     if (active && !isAnimating) {
-      setIsAnimating(true);
-      setPieces(createPieces());
+      const startTimer = window.setTimeout(() => {
+        setIsAnimating(true);
+        setPieces(createPieces());
+      }, 0);
 
-      const timer = setTimeout(() => {
+      const timer = window.setTimeout(() => {
         setIsAnimating(false);
         setPieces([]);
         onComplete?.();
       }, duration);
 
-      return () => clearTimeout(timer);
+      return () => {
+        window.clearTimeout(startTimer);
+        window.clearTimeout(timer);
+      };
     }
   }, [active, duration, isAnimating, createPieces, onComplete]);
 
@@ -107,7 +114,7 @@ export default function Confetti({ active, duration = 3000, onComplete }: Confet
             height: piece.size,
             backgroundColor: piece.color,
             transform: `rotate(${piece.rotation}deg)`,
-            borderRadius: Math.random() > 0.5 ? "50%" : "0%",
+            borderRadius: piece.rounded ? "50%" : "0%",
           }}
         />
       ))}
@@ -131,7 +138,8 @@ export function SuccessCelebration({
 
   useEffect(() => {
     if (show) {
-      setShowConfetti(true);
+      const timer = window.setTimeout(() => setShowConfetti(true), 0);
+      return () => window.clearTimeout(timer);
     }
   }, [show]);
 

@@ -3,14 +3,12 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useAccount } from "wagmi";
+import { useCurrentAccount, useCurrentWallet } from "@mysten/dapp-kit";
 import ConnectWallet from "@/components/ConnectWallet";
 import {
   useAllPoolsWithInfo,
   useRequiredCollateral,
   useUSDCBalance,
-  useUSDCAllowance,
-  useApproveUSDC,
   useJoinPool,
   useCreatePool,
   FormattedPool,
@@ -19,7 +17,9 @@ import {
 type PoolStatus = "all" | "open" | "active" | "completed";
 
 export default function PoolsPage() {
-  const { isConnected, address } = useAccount();
+  const account = useCurrentAccount();
+  const { isConnected } = useCurrentWallet();
+  const address = account?.address;
   const [filter, setFilter] = useState<PoolStatus>("all");
   const [selectedPool, setSelectedPool] = useState<FormattedPool | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -34,20 +34,6 @@ export default function PoolsPage() {
   const { collateral: requiredCollateral } = useRequiredCollateral(
     selectedPool?.address
   );
-
-  // Get allowance for selected pool
-  const { allowance, refetch: refetchAllowance } = useUSDCAllowance(
-    address,
-    selectedPool?.address
-  );
-
-  // Approve USDC
-  const {
-    approve,
-    isPending: approving,
-    isConfirming: confirmingApprove,
-    isSuccess: approveSuccess,
-  } = useApproveUSDC();
 
   // Join pool
   const {
@@ -71,13 +57,6 @@ export default function PoolsPage() {
     maxParticipants: 8,
     cycleDuration: 30,
   });
-
-  // Refetch allowance after approve success
-  useEffect(() => {
-    if (approveSuccess) {
-      refetchAllowance();
-    }
-  }, [approveSuccess, refetchAllowance]);
 
   // Handle join success
   const handleJoinSuccess = () => {
@@ -138,12 +117,6 @@ export default function PoolsPage() {
     }
   };
 
-  const handleApprove = () => {
-    if (selectedPool && requiredCollateral) {
-      approve(selectedPool.address, requiredCollateral);
-    }
-  };
-
   const handleJoinPool = () => {
     if (selectedPool) {
       joinPool(selectedPool.address);
@@ -154,7 +127,6 @@ export default function PoolsPage() {
     createPool(createForm.depositAmount, createForm.maxParticipants, createForm.cycleDuration);
   };
 
-  const hasEnoughAllowance = requiredCollateral ? allowance >= requiredCollateral : false;
   const hasEnoughBalance = requiredCollateral ? usdcBalance >= requiredCollateral : false;
 
   return (
@@ -185,16 +157,16 @@ export default function PoolsPage() {
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
                 <p className="protocol-font text-xs font-black uppercase tracking-[0.2em] text-sky-700">
-                  Integration boundary
+                  Sui-native pool registry
                 </p>
-                <h2 className="mt-1 text-lg font-black text-slate-950">Pool data is modular by design.</h2>
+                <h2 className="mt-1 text-lg font-black text-slate-950">One-click joins, visible cycles, gasless-ready actions.</h2>
                 <p className="mt-1 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
-                  This page keeps the inherited pool flow as a frontend baseline while Suivan&apos;s
-                  Sui contracts and backend API are being finalized.
+                  Suivan models ROSCA pools as Sui objects with clear member progress, payout order,
+                  and sponsored transaction hooks for consumer-grade onboarding.
                 </p>
               </div>
               <span className="protocol-font rounded-full border-2 border-slate-950 bg-[#dff8ff] px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-slate-950">
-                API-ready
+                Testnet-ready
               </span>
             </div>
           </div>
@@ -473,7 +445,7 @@ export default function PoolsPage() {
               <div className="rounded-2xl border-2 border-slate-950 bg-[#fff1c7] p-3 sm:p-4">
                 <p className="protocol-font mb-1 text-xs font-black uppercase tracking-[0.14em] text-slate-500">Estimated APY</p>
                 <p className="protocol-font text-xl font-black text-slate-950 sm:text-2xl">{selectedPool.apy}%</p>
-                <p className="mt-1 text-xs font-semibold text-slate-600">Yield routing placeholder for Suivan integration</p>
+                <p className="mt-1 text-xs font-semibold text-slate-600">Yield routing signal for Suivan pools</p>
               </div>
 
               {/* Balance Warning */}
@@ -486,62 +458,36 @@ export default function PoolsPage() {
                 </div>
               )}
 
-              {/* Allowance Status */}
               {hasEnoughBalance && (
                 <div className="rounded-2xl border-2 border-slate-950 bg-[#d9f8df] p-3 sm:p-4">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="protocol-font text-xs font-black uppercase tracking-[0.12em] text-slate-500 sm:text-sm">USDC Allowance</span>
-                    <span className="protocol-font text-xs font-black text-slate-950 sm:text-sm">
-                      {allowance.toFixed(2)} / {requiredCollateral?.toFixed(2) || "0"} USDC
-                    </span>
+                    <span className="protocol-font text-xs font-black uppercase tracking-[0.12em] text-slate-500 sm:text-sm">Sui Flow</span>
+                    <span className="protocol-font text-xs font-black text-slate-950 sm:text-sm">One click</span>
                   </div>
-                  {hasEnoughAllowance && (
-                    <p className="mt-1 text-xs font-semibold text-slate-600">Ready to join.</p>
-                  )}
+                  <p className="mt-1 text-xs font-semibold text-slate-600">No pre-authorization step. Suivan will submit one Sui transaction.</p>
                 </div>
               )}
             </div>
 
             <div className="space-y-3">
-              {!hasEnoughAllowance ? (
-                <button
-                  onClick={handleApprove}
-                  disabled={!hasEnoughBalance || approving || confirmingApprove}
-                  className={`w-full py-3 rounded-xl font-semibold transition-all min-h-[44px] text-sm sm:text-base ${
-                    !hasEnoughBalance || approving || confirmingApprove
-                      ? "cursor-not-allowed border-2 border-slate-200 bg-slate-100 text-slate-400"
-                      : "border-2 border-slate-950 bg-sky-400 text-slate-950 shadow-[3px_3px_0_#06111f] hover:-translate-y-0.5"
-                  }`}
-                >
-                  {approving || confirmingApprove ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-b-white"></div>
-                      {approving ? "Approving..." : "Confirming..."}
-                    </span>
-                  ) : (
-                    "Approve USDC"
-                  )}
-                </button>
-              ) : (
-                <button
-                  onClick={handleJoinPool}
-                  disabled={joining || confirmingJoin}
-                  className={`w-full py-3 rounded-xl font-semibold transition-all min-h-[44px] text-sm sm:text-base ${
-                    joining || confirmingJoin
-                      ? "cursor-not-allowed border-2 border-slate-200 bg-slate-100 text-slate-400"
-                      : "border-2 border-slate-950 bg-sky-400 text-slate-950 shadow-[3px_3px_0_#06111f] hover:-translate-y-0.5"
-                  }`}
-                >
-                  {joining || confirmingJoin ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-b-white"></div>
-                      {joining ? "Joining..." : "Confirming..."}
-                    </span>
-                  ) : (
-                    "Join Pool"
-                  )}
-                </button>
-              )}
+              <button
+                onClick={handleJoinPool}
+                disabled={!hasEnoughBalance || joining || confirmingJoin}
+                className={`w-full py-3 rounded-xl font-semibold transition-all min-h-[44px] text-sm sm:text-base ${
+                  !hasEnoughBalance || joining || confirmingJoin
+                    ? "cursor-not-allowed border-2 border-slate-200 bg-slate-100 text-slate-400"
+                    : "border-2 border-slate-950 bg-sky-400 text-slate-950 shadow-[3px_3px_0_#06111f] hover:-translate-y-0.5"
+                }`}
+              >
+                {joining || confirmingJoin ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-slate-950 border-b-white"></div>
+                    {joining ? "Joining..." : "Finalizing..."}
+                  </span>
+                ) : (
+                  "Join Pool"
+                )}
+              </button>
             </div>
 
             <p className="mt-4 text-center text-xs font-semibold text-slate-500">

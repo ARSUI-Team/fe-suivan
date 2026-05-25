@@ -2,14 +2,14 @@
 
 Suivan is a Sui-native frontend direction for a global ROSCA protocol. ROSCA stands for Rotating Savings and Credit Association. Arisan is treated as a local expression of the same collective savings model, while the product language stays global-first and English-first.
 
-This repository contains the Suivan frontend direction: a cleaner hackathon-grade interface, GSAP motion, Sui-oriented copy, and modular frontend boundaries for future backend and contract integration.
+This repository contains the Suivan frontend: a cleaner hackathon-grade interface, GSAP motion, Sui-oriented copy, and modular frontend boundaries for backend and Move contract integration.
 
 ## Current Focus
 
 - Landing page with Suivan branding and English copy
 - ROSCA education for a global audience
-- Pool object mockups and cycle progress surfaces
-- APY and yield signals as frontend modules
+- Sui pool object explorer and cycle progress surfaces
+- APY and yield signals from Sui-focused DeFiLlama data
 - GSAP and Lenis motion inspired by Pivy and Zentry-style storytelling
 - Reusable frontend structure that can later connect to the new backend and Sui smart contracts
 
@@ -21,14 +21,13 @@ This repository contains the Suivan frontend direction: a cleaner hackathon-grad
 - Tailwind CSS 4
 - GSAP
 - Lenis
-- lucide-react
-- wagmi and viem are retained temporarily while the final Sui wallet adapter is not yet wired
+- @mysten/dapp-kit
+- @mysten/sui
 
 ## Important Product Notes
 
-- Do not treat legacy ABI, contract addresses, chain assumptions, or API shapes as final.
-- Smart contract and backend integration are still expected to change.
-- Frontend work should stay modular so Sui wallet, API, and contract adapters can be swapped in later.
+- Do not treat inherited contract addresses, chain assumptions, or API shapes as final.
+- Frontend work should stay modular so Sui wallet, API, sponsored transaction, zkLogin, and contract adapters can be swapped cleanly.
 - User-facing copy should stay in English.
 - Avoid emoji in UI copy, README content, and new source files.
 
@@ -54,8 +53,8 @@ npm run build
 ## Key Routes
 
 - `/` Suivan landing page
-- `/pools` Pool explorer prepared for future Suivan API and contract adapters
-- `/pools/[address]` Pool detail prepared for member state, contribution, payout, collateral, and yield data
+- `/pools` Sui-native pool explorer
+- `/pools/[address]` Pool detail for member state, contribution, payout, commitment, and yield data
 - `/faq` Suivan FAQ and ROSCA education
 
 ## Community Links
@@ -63,4 +62,4 @@ npm run build
 - Telegram: `https://t.me/suivan`
 - Discord: `https://discord.gg/suivan`
 
-Update these URLs when the official community channels are finalized.
+Update these URLs when the official community channels are live.
