@@ -57,12 +57,12 @@ html {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #7c3aed, #4f46e5);
+  background: linear-gradient(180deg, #61d7ff, #14b8a6);
 }
 
 /* Selection color */
 ::selection {
-  background: rgba(139, 92, 246, 0.3);
+  background: rgba(97, 215, 255, 0.34);
   color: inherit;
 }
 
@@ -161,7 +161,7 @@ html {
 
 /* Gradient text utility */
 .gradient-text {
-  background: linear-gradient(135deg, #8b5cf6, #ec4899, #6366f1);
+  background: linear-gradient(135deg, #0f5fa8, #61d7ff, #14b8a6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

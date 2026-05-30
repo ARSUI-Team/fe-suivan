@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import ConnectSuiWallet from "./ConnectSuiWallet";
 import SuivanLogo from "./SuivanLogo";
-import { useLanguage, Language } from "@/context/LanguageContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
